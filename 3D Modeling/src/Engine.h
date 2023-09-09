@@ -18,10 +18,15 @@ public:
 	Plane hoveredPlane, selectedPlane;
 
 	std::vector<RenderObject> translateAxes;
-	std::vector<bool> isAxisHovered;
+
+	bool isAxisHovered = false;
+	int hoveredAxis = 0;
 
 	bool displayTranslateAxes = false;
 	glm::vec3 axesPos;
+
+	glm::vec3 getMoveDirection(int axis);
+	glm::vec3 getAxisDirection(int axis);
 
 };
 

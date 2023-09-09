@@ -1,6 +1,7 @@
 #pragma once
 #include "StandardIncludes.h"
 #include "ModelObject.h"
+using namespace glm;
 
 //ImageTools.cpp
 VkImageView createImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags);
@@ -29,7 +30,7 @@ void createModelIndexBuffer(ModelObject &o, int i);
 void arcballRotation(const glm::vec2& start, const glm::vec2& end, glm::quat& orientation);
 glm::vec3 getArcballVector(const glm::vec2& point);
 //converts a position in screen space to a position in world space
-// @param vec: position in scren space x, y , z[0-1], 1.0
+// @param vec: position in screen space x, y , z[0-1], 1.0
 glm::vec4 convertScreenVectorToWorldVector(glm::vec4 vec);
 //gets a ray away from the mouse pointer in world space
 // @param pos: 2D position of the mouse in screen space
@@ -47,6 +48,16 @@ bool checkIfPointInTriangle2D(glm::vec2 p, glm::vec2 p1, glm::vec2 p2, glm::vec2
 //v1 and v2 are two vectors on the plane
 glm::vec3 findIntersectionPointOfRayAndPlane(glm::vec3 rayOri, glm::vec3 rayDir, glm::vec3 planeOri,
 	glm::vec3 v1, glm::vec3 v2);
+//moves a point along a line starting at the point closest to ray1 in the axis direction
+//  and ending at the point on the line closest to ray2 in the axis direction
+//  that ray1 points to and ending at the point along the axis that
+//  ray2 points to
+//assumes both rays start at the same point
+//returns a 0 vec if it is not successful
+vec3 movePointAlongLineFromRay(vec3 lineOrigin, vec3 lineDir, vec3 axis, vec3 rayOrigin, vec3 ray1, vec3 ray2);
+//projects a ray onto a line by moving it along an axis until they intersect
+//vec has a value of FLT_MAX if no intersection exists
+vec3 projectRayOntoLineInDirection(vec3 rayOrigin, vec3 rayDir, vec3 lineOrigin, vec3 lineDir, vec3 axis);
 
 
 //ModelingTools.cpp

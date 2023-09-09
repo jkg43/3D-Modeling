@@ -109,7 +109,7 @@ static void drawFrame()
 		i++;
 	}
 
-	
+
 	if (vg.engine.displayTranslateAxes)
 	{
 		for (RenderObject &o : vg.engine.translateAxes)
@@ -119,6 +119,7 @@ static void drawFrame()
 			i++;
 		}
 	}
+
 	
 
 	//start line subpass
@@ -1295,7 +1296,6 @@ static void createRenderObjects()
 
 	loadModel(vg.renderObjects[0],MODEL_PATH);
 
-	//loadCube(vg.renderObjects[1]);
 
 	float axisWidth = 0.075f;
 

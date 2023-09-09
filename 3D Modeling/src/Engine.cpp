@@ -1,12 +1,11 @@
 #include "Constants.h"
 #include "Engine.h"
 #include "VulkanManager.h"
-
+using namespace glm;
 
 void initEngine()
 {
 	vg.engine.translateAxes.resize(3);
-	vg.engine.isAxisHovered.resize(3);
 
 	float axisWidth = 0.05f;
 	float axisLength = 0.25f;
@@ -24,4 +23,34 @@ void initEngine()
 		i++;
 	}
 
+}
+
+vec3 Engine::getMoveDirection(int axis)
+{
+	switch (axis)
+	{
+	case 0:
+		return vec3(1, 0, 0);
+	case 1:
+		return vec3(0, 1, 0);
+	case 2:
+		return vec3(0, 0, 1);
+	default:
+		return vec3(0);
+	}
+}
+
+vec3 Engine::getAxisDirection(int axis)
+{
+	switch (hoveredAxis)
+	{
+	case 0:
+		return vec3(0, 0, 1);
+	case 1:
+		return vec3(0, 0, 1);
+	case 2:
+		return vg.cam.right();
+	default:
+		return vec3(0);
+	}
 }

@@ -24,6 +24,15 @@ const float rotationSpeed = -0.005f;
 bool draggingLeft = false, draggingRight = false;
 double leftDragX = 0, leftDragY = 0, rightDragX = 0, rightDragY = 0;
 
+//0 for move/rotate camera
+//1 for moving an object along an axis
+#define DRAG_TYPE_CAM 0
+#define DRAG_TYPE_MOVE 1
+int dragTypeLeft = 0, dragTypeRight = 0;
+//direction of movement
+glm::vec3 moveDirection = glm::vec3(0);
+glm::vec3 axisDirection = glm::vec3(0);
+
 //vars used for detecting single clicks
 
 std::chrono::steady_clock::time_point clickStart;
@@ -50,133 +59,152 @@ void processInputs()
 		if (draggingLeft)
 		{
 			double dx = mx - leftDragX, dy = my - leftDragY;
-
-			float ax = (float)dx * rotationSpeed, ay = (float)dy * rotationSpeed; 
-			/*
-			//float cosax = cos(ax), sinax = sin(ax);
-
-			//vg.cam.transform.position = glm::vec3(pos.x * cosax - pos.y * sinax,
-			//	pos.y * cosax + pos.x * sinax, vg.cam.transform.position.z);
-
-			
-
-			float dtheta = dx * rotationSpeed, dphi = dy * rotationSpeed;
-
-			float cosdt = cos(dtheta), sindt = sin(dtheta), cosdp = cos(dphi), sindp = sin(dphi);
-
-			float dist = sqrt(pos.x * pos.x + pos.y * pos.y);
-
-			float invdist = 1 / dist;
-
-			vg.cam.transform.position.x = vg.cam.targetPos.x + pos.x * cosdp * cosdt - pos.y * cosdp * sindt +
-				pos.z * pos.x * invdist * sindp * cosdt - pos.z * pos.y * invdist * sindp * sindt;
-			vg.cam.transform.position.y = vg.cam.targetPos.y + pos.y * cosdp * cosdt + pos.x * cosdp * sindt +
-				pos.z * pos.y * invdist * sindp * cosdt + pos.z * pos.x * invdist * sindp * sindt;
-			vg.cam.transform.position.z = vg.cam.targetPos.z + pos.z * cosdp - dist * sindp;
-
-			glm::vec3 startAngles = glm::degrees(glm::eulerAngles(vg.cam.transform.orientation));
-
-			vg.cam.transform.orientation = glm::quatLookAt(vg.cam.forward(), glm::vec3(0, 0, 1));
-
-			glm::vec3 endAngles = glm::degrees(glm::eulerAngles(vg.cam.transform.orientation));
-
-			if (abs(endAngles.z+180) - abs(startAngles.z+180) > 90)
+			float ax = (float)dx * rotationSpeed, ay = (float)dy * rotationSpeed;
+			switch(dragTypeLeft)
 			{
-				std::cout << "Start angles: " << glm::to_string(startAngles) << ", End angle: "
-					<< glm::to_string(endAngles) << std::endl;
-				glm::vec3 p = vg.cam.transform.position;
-				std::cout << "Theta: " << glm::degrees(atan(p.y / p.x)) << ", Phi: " <<
-					glm::degrees(acos(p.z / sqrt(p.x * p.x + p.y + p.y + p.z * p.z))) << std::endl;
-				//if (vg.cam.transform.position.z > 0)
-				//{
-				//	vg.cam.transform.position.x = vg.cam.targetPos.x;
-				//	vg.cam.transform.position.y = vg.cam.targetPos.y;
-				//	vg.cam.transform.position.z = vg.cam.targetPos.z + vg.cam.dist;
-				//}
-				//else
-				//{
-				//	vg.cam.transform.position.x = vg.cam.targetPos.x;
-				//	vg.cam.transform.position.y = vg.cam.targetPos.y;
-				//	vg.cam.transform.position.z = vg.cam.targetPos.z - vg.cam.dist;
-				//}
+			case DRAG_TYPE_CAM:
 
-				
+				/*
+				//float cosax = cos(ax), sinax = sin(ax);
+
+				//vg.cam.transform.position = glm::vec3(pos.x * cosax - pos.y * sinax,
+				//	pos.y * cosax + pos.x * sinax, vg.cam.transform.position.z);
+
+
+
+				float dtheta = dx * rotationSpeed, dphi = dy * rotationSpeed;
+
+				float cosdt = cos(dtheta), sindt = sin(dtheta), cosdp = cos(dphi), sindp = sin(dphi);
+
+				float dist = sqrt(pos.x * pos.x + pos.y * pos.y);
+
+				float invdist = 1 / dist;
+
+				vg.cam.transform.position.x = vg.cam.targetPos.x + pos.x * cosdp * cosdt - pos.y * cosdp * sindt +
+					pos.z * pos.x * invdist * sindp * cosdt - pos.z * pos.y * invdist * sindp * sindt;
+				vg.cam.transform.position.y = vg.cam.targetPos.y + pos.y * cosdp * cosdt + pos.x * cosdp * sindt +
+					pos.z * pos.y * invdist * sindp * cosdt + pos.z * pos.x * invdist * sindp * sindt;
+				vg.cam.transform.position.z = vg.cam.targetPos.z + pos.z * cosdp - dist * sindp;
+
+				glm::vec3 startAngles = glm::degrees(glm::eulerAngles(vg.cam.transform.orientation));
+
+				vg.cam.transform.orientation = glm::quatLookAt(vg.cam.forward(), glm::vec3(0, 0, 1));
+
+				glm::vec3 endAngles = glm::degrees(glm::eulerAngles(vg.cam.transform.orientation));
+
+				if (abs(endAngles.z+180) - abs(startAngles.z+180) > 90)
+				{
+					std::cout << "Start angles: " << glm::to_string(startAngles) << ", End angle: "
+						<< glm::to_string(endAngles) << std::endl;
+					glm::vec3 p = vg.cam.transform.position;
+					std::cout << "Theta: " << glm::degrees(atan(p.y / p.x)) << ", Phi: " <<
+						glm::degrees(acos(p.z / sqrt(p.x * p.x + p.y + p.y + p.z * p.z))) << std::endl;
+					//if (vg.cam.transform.position.z > 0)
+					//{
+					//	vg.cam.transform.position.x = vg.cam.targetPos.x;
+					//	vg.cam.transform.position.y = vg.cam.targetPos.y;
+					//	vg.cam.transform.position.z = vg.cam.targetPos.z + vg.cam.dist;
+					//}
+					//else
+					//{
+					//	vg.cam.transform.position.x = vg.cam.targetPos.x;
+					//	vg.cam.transform.position.y = vg.cam.targetPos.y;
+					//	vg.cam.transform.position.z = vg.cam.targetPos.z - vg.cam.dist;
+					//}
+
+
+				}
+
+				//TODO decide if I want to use angle based(arcballViewMatrix) or
+				//  position based(lookAt) for the camera
+				//  angle based is simpler but less dynamic for non modeling applications
+				//  position based is more general but more complicated
+
+
+				//glm::quat delta = glm::quat(glm::vec3(ay, ax, 0));
+
+				//glm::vec3 eulers = glm::eulerAngles(delta);
+
+				//glm::quat o = glm::degrees(glm::eulerAngles(vg.cam.transform.orientation));
+
+				//std::cout << "dx: " << dx << ", dy: " << dy << std::endl << "x: " << delta.x << ", y: "
+				//	<< delta.y << ", z: " << delta.z << ", w: " << delta.w << std::endl;
+
+				//std::cout << "Delta: " << glm::to_string(delta) << std::endl;
+
+				//std::cout << "Camera: " << glm::to_string(vg.cam.transform.orientation) << std::endl;
+
+				//std::cout << "Delta Pitch: " << eulers.x << ", Delta Yaw: " << eulers.y << ", Delta Roll: " << eulers.z
+				//	<< std::endl;
+
+				//std::cout << "Camera Pitch: " << o.x << ", Camera Yaw: " << o.y << ", Camera Roll: " << o.z
+				//	<< std::endl;
+
+				//vg.cam.transform.orientation *= delta;
+				*/
+				deltaM = (int)(dx + dy);
+
+				if (deltaM > deltaMThreshold)
+				{
+					clickTime = 1;
+				}
+
+				if (clickTime > clickTimeSeconds)
+				{
+					glm::quat yawQuat = glm::angleAxis(ax, glm::vec3(0, 0, 1));
+					glm::quat pitchQuat = glm::angleAxis(ay, glm::vec3(1, 0, 0));
+
+					vg.cam.transform.orientation = yawQuat * vg.cam.transform.orientation * pitchQuat;
+				}
+				break;
+			case DRAG_TYPE_MOVE:
+				glm::vec3 moveAmount = movePointAlongLineFromRay(vg.engine.axesPos, moveDirection,
+					axisDirection, vg.cam.getPosition(), getRayFromScreenPos(vec2(leftDragX, leftDragY)),
+					getRayFromScreenPos(vec2(mx, my)));
+				vg.engine.axesPos += moveAmount;
+				if (vg.engine.isVertexSelected)
+				{
+					vg.engine.selectedVertex->pos += moveAmount;
+					vg.engine.selectedObject->ro->verticesChanged = true;
+				}
+				break;
 			}
 			
-			//TODO decide if I want to use angle based(arcballViewMatrix) or
-			//  position based(lookAt) for the camera
-			//  angle based is simpler but less dynamic for non modeling applications
-			//  position based is more general but more complicated
-
-
-			//glm::quat delta = glm::quat(glm::vec3(ay, ax, 0));
-
-			//glm::vec3 eulers = glm::eulerAngles(delta);
-
-			//glm::quat o = glm::degrees(glm::eulerAngles(vg.cam.transform.orientation));
-
-			//std::cout << "dx: " << dx << ", dy: " << dy << std::endl << "x: " << delta.x << ", y: "
-			//	<< delta.y << ", z: " << delta.z << ", w: " << delta.w << std::endl;
-
-			//std::cout << "Delta: " << glm::to_string(delta) << std::endl;
-
-			//std::cout << "Camera: " << glm::to_string(vg.cam.transform.orientation) << std::endl;
-
-			//std::cout << "Delta Pitch: " << eulers.x << ", Delta Yaw: " << eulers.y << ", Delta Roll: " << eulers.z
-			//	<< std::endl;
-
-			//std::cout << "Camera Pitch: " << o.x << ", Camera Yaw: " << o.y << ", Camera Roll: " << o.z
-			//	<< std::endl;
-
-			//vg.cam.transform.orientation *= delta;
-			*/
-			deltaM = (int)(dx + dy);
-
-			if (deltaM > deltaMThreshold)
-			{
-				clickTime = 1;
-			}
-
-			if (clickTime > clickTimeSeconds)
-			{
-				glm::quat yawQuat = glm::angleAxis(ax, glm::vec3(0, 0, 1));
-				glm::quat pitchQuat = glm::angleAxis(ay, glm::vec3(1,0,0));
-
-				vg.cam.transform.orientation = yawQuat * vg.cam.transform.orientation * pitchQuat;
-			}
-
-			/*
-			//https://stackoverflow.com/questions/17297374/adding-an-euler-angle-to-a-quaternion
-
-			//o = glm::degrees(glm::eulerAngles(vg.cam.transform.orientation));
-
-			//std::cout << "Camera after: " << glm::to_string(vg.cam.transform.orientation) << std::endl;
-
-			//std::cout << "Camera Pitch: " << o.x << ", Camera Yaw: " << o.y << ", Camera Roll: " << o.z
-			//	<< std::endl << std::endl;
-
-
 			
 
-			//arcballRotation(glm::vec2(leftDragX, leftDragY), glm::vec2(leftDragX + ax, leftDragY + ay),
-			//	vg.cam.transform.orientation);
+				/*
+				//https://stackoverflow.com/questions/17297374/adding-an-euler-angle-to-a-quaternion
 
-			//eulers = glm::eulerAngles(vg.cam.transform.orientation);
-			//eulers += glm::vec3(ax, ay, 0);
-			//vg.cam.transform.orientation = glm::quat(eulers);
+				//o = glm::degrees(glm::eulerAngles(vg.cam.transform.orientation));
 
-			//float pitch = rotationSpeed * dy;
-			//float yaw = rotationSpeed * dx;
+				//std::cout << "Camera after: " << glm::to_string(vg.cam.transform.orientation) << std::endl;
+
+				//std::cout << "Camera Pitch: " << o.x << ", Camera Yaw: " << o.y << ", Camera Roll: " << o.z
+				//	<< std::endl << std::endl;
 
 
-			//glm::vec3 forward = vg.cam.forward();
 
-			//glm::vec3 cameraUp = glm::rotate(vg.cam.up(), pitch, forward);
-			//glm::vec3 cameraRight = glm::rotate(vg.cam.right(), yaw, forward);
 
-			//vg.cam.transform.position += cameraUp;
-			//vg.cam.transform.position += cameraRight;
-			*/
+				//arcballRotation(glm::vec2(leftDragX, leftDragY), glm::vec2(leftDragX + ax, leftDragY + ay),
+				//	vg.cam.transform.orientation);
+
+				//eulers = glm::eulerAngles(vg.cam.transform.orientation);
+				//eulers += glm::vec3(ax, ay, 0);
+				//vg.cam.transform.orientation = glm::quat(eulers);
+
+				//float pitch = rotationSpeed * dy;
+				//float yaw = rotationSpeed * dx;
+
+
+				//glm::vec3 forward = vg.cam.forward();
+
+				//glm::vec3 cameraUp = glm::rotate(vg.cam.up(), pitch, forward);
+				//glm::vec3 cameraRight = glm::rotate(vg.cam.right(), yaw, forward);
+
+				//vg.cam.transform.position += cameraUp;
+				//vg.cam.transform.position += cameraRight;
+				*/
+			
 
 			leftDragX = mx;
 			leftDragY = my;
@@ -184,23 +212,39 @@ void processInputs()
 		if (draggingRight)
 		{
 			double dx = mx - rightDragX, dy = my - rightDragY;
-
-			deltaM = (int)(dx + dy);
-
-			if (deltaM > deltaMThreshold)
+			switch (dragTypeRight)
 			{
-				clickTime = 1;
-			}
+			case DRAG_TYPE_CAM:
 
-			if (clickTime > clickTimeSeconds)
-			{
-				glm::vec3 right = vg.cam.right();
+				deltaM = (int)(dx + dy);
 
-				glm::vec3 delta = glm::vec3(dx * right.x * -moveSpeed,
-					dx * right.y * -moveSpeed, dy * moveSpeed);
+				if (deltaM > deltaMThreshold)
+				{
+					clickTime = 1;
+				}
 
-				vg.cam.targetPos += delta;
-				vg.cam.transform.position += delta;
+				if (clickTime > clickTimeSeconds)
+				{
+					glm::vec3 right = vg.cam.right();
+
+					glm::vec3 delta = glm::vec3(dx * right.x * -moveSpeed,
+						dx * right.y * -moveSpeed, dy * moveSpeed);
+
+					vg.cam.targetPos += delta;
+					vg.cam.transform.position += delta;
+				}
+				break;
+			case DRAG_TYPE_MOVE:
+				glm::vec3 moveAmount = movePointAlongLineFromRay(vg.engine.axesPos, moveDirection,
+					axisDirection, vg.cam.getPosition(), getRayFromScreenPos(vec2(rightDragX, rightDragY)),
+					getRayFromScreenPos(vec2(mx, my)));
+				vg.engine.axesPos += moveAmount;
+				if (vg.engine.isVertexSelected)
+				{
+					vg.engine.selectedVertex->pos += moveAmount;
+					vg.engine.selectedObject->ro->verticesChanged = true;
+				}
+				break;
 			}
 
 			rightDragX = mx;
@@ -387,11 +431,31 @@ static void mouseButtonCallback(GLFWwindow* window, int button, int action, int 
 			draggingLeft = true;
 			leftDragX = mx;
 			leftDragY = my;
+			if (vg.engine.isAxisHovered)
+			{
+				dragTypeLeft = DRAG_TYPE_MOVE;
+				moveDirection = vg.engine.getMoveDirection(vg.engine.hoveredAxis);
+				axisDirection = vg.engine.getAxisDirection(vg.engine.hoveredAxis);
+			}
+			else
+			{
+				dragTypeLeft = DRAG_TYPE_CAM;
+			}
 			break;
 		case GLFW_MOUSE_BUTTON_RIGHT:
 			draggingRight = true;
 			rightDragX = mx;
 			rightDragY = my;
+			if (vg.engine.isAxisHovered)
+			{
+				dragTypeRight = DRAG_TYPE_MOVE;
+				moveDirection = vg.engine.getMoveDirection(vg.engine.hoveredAxis);
+				axisDirection = vg.engine.getAxisDirection(vg.engine.hoveredAxis);
+			}
+			else
+			{
+				dragTypeRight = DRAG_TYPE_CAM;
+			}
 			break;
 		case GLFW_MOUSE_BUTTON_MIDDLE:
 

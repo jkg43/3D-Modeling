@@ -283,7 +283,67 @@ vec3 findIntersectionPointOfRayAndPlane(vec3 rayOri, vec3 rayDir, vec3 planeOri,
     return rayOri + rayDir * l;
 }
 
+vec3 movePointAlongLineFromRay(vec3 lineOrigin, vec3 lineDir, vec3 axis, vec3 rayOrigin, vec3 ray1, vec3 ray2)
+{
+    vec3 proj1 = projectRayOntoLineInDirection(rayOrigin, ray1, lineOrigin, lineDir, axis);
+    if (proj1.x == FLT_MAX)
+    {
+        return vec3(0);
+    }
+    vec3 proj2 = projectRayOntoLineInDirection(rayOrigin, ray2, lineOrigin, lineDir, axis);
+    if (proj2.x == FLT_MAX)
+    {
+        return vec3(0);
+    }
 
+
+    return proj2 - proj1;
+}
+
+vec3 projectRayOntoLineInDirection(vec3 rayOrigin, vec3 rayDir, vec3 lineOrigin, vec3 lineDir, vec3 axis)
+{
+    if (rayOrigin == lineOrigin)
+    {
+        return rayOrigin;
+    }
+    float c3, c4, x, y;
+    vec3 dp = lineOrigin - rayOrigin;
+    if (rayDir.x != 0)
+    {
+        x = axis.y - axis.x * rayDir.y / rayDir.x;
+        y = axis.z - axis.x * rayDir.z / rayDir.x;
+        c4 = rayDir.y * y - rayDir.z * x;
+        c3 = (rayDir.x * (dp.z * x - dp.y * y) + dp.x * c4) 
+            / (rayDir.x * (lineDir.y * y - lineDir.z * x) - lineDir.x * c4);
+    }
+    else if (rayDir.y != 0)
+    {
+        x = axis.x - axis.y * rayDir.x / rayDir.y;
+        y = axis.z - axis.y * rayDir.z / rayDir.y;
+        c4 = rayDir.x * y - rayDir.z * x;
+        c3 = (rayDir.y * (dp.z * x - dp.x * y) + dp.y * c4)
+            / (rayDir.y * (lineDir.x * y - lineDir.z * x) - lineDir.y * c4);
+    }
+    else if (rayDir.z != 0)
+    {
+        x = axis.y - axis.z * rayDir.y / rayDir.z;
+        y = axis.x - axis.z * rayDir.x / rayDir.z;
+        c4 = rayDir.y * y - rayDir.x * x;
+        c3 = (rayDir.z * (dp.x * x - dp.y * y) + dp.z * c4)
+            / (rayDir.z * (lineDir.y * y - lineDir.x * x) - lineDir.z * c4);
+    }
+    else
+    {
+        return vec3(FLT_MAX);
+    }
+
+    if (isnan(c3))
+    {
+        c3 = c3;
+    }
+
+    return lineOrigin + lineDir * c3;
+}
 
 
 

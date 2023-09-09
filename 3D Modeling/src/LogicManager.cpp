@@ -99,6 +99,8 @@ void updateLogicState()
 
 	int i = 0;
 
+	vg.engine.isAxisHovered = false;
+
 	if (vg.engine.displayTranslateAxes)
 	{
 		for (RenderObject &o : vg.engine.translateAxes)
@@ -108,6 +110,8 @@ void updateLogicState()
 				for (Vertex &v : o.vertices)
 				{
 					v.color[i] = 0.5f;
+					vg.engine.isAxisHovered = true;
+					vg.engine.hoveredAxis = i;
 				}
 			}
 			else
