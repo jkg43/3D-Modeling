@@ -116,6 +116,7 @@
     <Text Include="GLSL\VertexShaderGLSL.txt">
       <Filter>GLSL</Filter>
     </Text>
+    <Text Include="NOTES.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\compile.bat">

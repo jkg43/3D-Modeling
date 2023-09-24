@@ -11,5 +11,3 @@ void Plane::calculateNormal()
 	normal = glm::normalize(glm::cross(a, b));
 
 }
-
-

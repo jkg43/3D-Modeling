@@ -2,7 +2,6 @@
 #include "StandardIncludes.h"
 
 
-
 struct Vertex
 {
 	glm::vec3 pos;
@@ -81,3 +80,8 @@ public:
 	void calculateNormal();
 
 };
+
+
+
+
+

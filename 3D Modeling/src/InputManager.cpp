@@ -5,6 +5,7 @@
 #include <glm/gtx/rotate_vector.hpp>
 #include <chrono>
 #include "GeometryTypes.h"
+#include <algorithm>
 
 double mx=0, my=0;
 
@@ -162,10 +163,10 @@ void processInputs()
 					axisDirection, vg.cam.getPosition(), getRayFromScreenPos(vec2(leftDragX, leftDragY)),
 					getRayFromScreenPos(vec2(mx, my)));
 				vg.engine.axesPos += moveAmount;
-				if (vg.engine.isVertexSelected)
+				for (auto &[id, v] : vg.engine.selectedVertices)
 				{
-					vg.engine.selectedVertex->pos += moveAmount;
-					vg.engine.selectedObject->ro->verticesChanged = true;
+					v.vertex->pos += moveAmount;
+					v.object->ro->verticesChanged = true;
 				}
 				break;
 			}
@@ -239,10 +240,10 @@ void processInputs()
 					axisDirection, vg.cam.getPosition(), getRayFromScreenPos(vec2(rightDragX, rightDragY)),
 					getRayFromScreenPos(vec2(mx, my)));
 				vg.engine.axesPos += moveAmount;
-				if (vg.engine.isVertexSelected)
+				for (auto [id, v] : vg.engine.selectedVertices)
 				{
-					vg.engine.selectedVertex->pos += moveAmount;
-					vg.engine.selectedObject->ro->verticesChanged = true;
+					v.vertex->pos += moveAmount;
+					v.object->ro->verticesChanged = true;
 				}
 				break;
 			}
@@ -291,22 +292,6 @@ static void keyCallback(GLFWwindow* window, int key, int scancode, int action, i
 			case GLFW_KEY_C:
 				vg.bufferMemManager.combineBlocks();
 				break;
-			case GLFW_KEY_UP:
-				//vg.cam.objectDist++;
-				if (vg.engine.isVertexSelected)
-				{
-					vg.engine.selectedVertex->pos.z += 0.25;
-					vg.engine.selectedObject->ro->verticesChanged = true;
-				}
-				break;
-			case GLFW_KEY_DOWN:
-				//vg.cam.objectDist--;
-				if (vg.engine.isVertexSelected)
-				{
-					vg.engine.selectedVertex->pos.z -= 0.25;
-					vg.engine.selectedObject->ro->verticesChanged = true;
-				}
-				break;
 			case GLFW_KEY_M:
 				std::cout << "Buffer Memory Left: " << vg.bufferMemManager.memoryLeft / 1024 << " kB" << std::endl;
 				break;
@@ -347,6 +332,9 @@ static void keyCallback(GLFWwindow* window, int key, int scancode, int action, i
 			case GLFW_KEY_F3:
 				vg.debugValues[5] = 1.0f;
 				break;
+			case GLFW_KEY_UP:
+				printf("Num selected: %d\n", vg.engine.selectedVertices.size());
+				break;
 			default:
 				break;
 			}
@@ -366,12 +354,6 @@ static void keyCallback(GLFWwindow* window, int key, int scancode, int action, i
 			switch (key)
 			{
 			case GLFW_KEY_SPACE:
-				break;
-			case GLFW_KEY_UP:
-				vg.cam.objectDist++;
-				break;
-			case GLFW_KEY_DOWN:
-				vg.cam.objectDist--;
 				break;
 			case GLFW_KEY_LEFT_BRACKET:
 				vg.modelObjects[0].shiftAlongNormal(0.2f, 1);
@@ -497,36 +479,48 @@ static void scrollCallback(GLFWwindow* window, double xOffset, double yOffset)
 	ImGuiIO& guiIO = ImGui::GetIO();
 	if (!guiIO.WantCaptureMouse)
 	{
-		vg.cam.dist *= static_cast<float>(pow(1.1, -yOffset));
+		float dist = static_cast<float>(pow(1.1, -yOffset));
+		vg.cam.dist *= dist;
 	}
 }
 
 static void mouseClickCallback(int button)
 {
+	static size_t axisVertexId = 0;
+
 	switch (button)
 	{
 	case GLFW_MOUSE_BUTTON_LEFT:
 		//printf("LMB clicked\n");
 		if (vg.engine.isVertexHovered)
 		{
-			if (vg.engine.isVertexSelected)
+			if (vg.engine.selectedVertices.count(vg.engine.hoveredVertex.id) == 0)
 			{
-				vg.engine.selectedVertex->color = glm::vec3(0, 0, 1.0f);
+				vg.engine.selectedVertices[vg.engine.hoveredVertex.id] = vg.engine.hoveredVertex;
+				vg.engine.displayTranslateAxes = true;
+				vg.engine.axesPos = vg.engine.hoveredVertex.getPos();
+				axisVertexId = vg.engine.hoveredVertex.id;
 			}
-			vg.engine.isVertexSelected = true;
-			vg.engine.selectedVertex = vg.engine.hoveredVertex;
-			vg.engine.selectedVertex->color = glm::vec3(1.0f, 0.6f, 0);
-			vg.engine.selectedObject = vg.engine.hoveredObject;
-			vg.engine.selectedObject->ro->verticesChanged = true;
+			else
+			{
+				vg.engine.selectedVertices.erase(vg.engine.hoveredVertex.id);
+				if (vg.engine.selectedVertices.empty())
+				{
+					vg.engine.displayTranslateAxes = false;
+				}
+				else if (vg.engine.hoveredVertex.id == axisVertexId)
+				{
+					auto &newVertex = *vg.engine.selectedVertices.begin();
+					vg.engine.axesPos = newVertex.second.getPos();
+					axisVertexId = newVertex.first;
+				}
+			}
+			
 		}
 		else
 		{
-			if (vg.engine.isVertexSelected)
-			{
-				vg.engine.selectedVertex->color = glm::vec3(0, 0, 1.0f);
-				vg.engine.selectedObject->ro->verticesChanged = true;
-			}
-			vg.engine.isVertexSelected = false;
+			vg.engine.selectedVertices.clear();
+			vg.engine.displayTranslateAxes = false;
 		}
 		break;
 	case GLFW_MOUSE_BUTTON_RIGHT:

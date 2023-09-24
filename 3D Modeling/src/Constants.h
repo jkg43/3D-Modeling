@@ -1,5 +1,6 @@
 #pragma once
 #include "StandardIncludes.h"
+#include "GeometryTypes.h"
 #include "Transform.h"
 #include "VulkanGlobals.h"
 #include "WindowManager.h"
@@ -47,6 +48,8 @@ const std::vector<const char*> validationLayers = {
 const std::vector<const char*> deviceExtensions = {
 	VK_KHR_SWAPCHAIN_EXTENSION_NAME
 };
+
+
 
 
 const float pi = (float)3.14159265358979323846264338327950288;

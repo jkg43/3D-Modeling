@@ -168,6 +168,7 @@
   <ItemGroup>
     <Text Include="GLSL\FragmentShaderGLSL.txt" />
     <Text Include="GLSL\VertexShaderGLSL.txt" />
+    <Text Include="NOTES.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\compile.bat" />

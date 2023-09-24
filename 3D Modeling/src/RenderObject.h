@@ -1,6 +1,7 @@
 #pragma once
 #include "StandardIncludes.h"
 #include "Transform.h"
+#include "GeometryTypes.h"
 
 class RenderObject
 {
@@ -17,6 +18,8 @@ public:
 	void scale(float factor);
 
 	bool verticesChanged = false;
+
+	bool isVisible = true;
 
 	Transform transform;
 };

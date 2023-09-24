@@ -20,7 +20,9 @@
 #include<array>
 #include<optional>
 #include<stdbool.h>
-#include "GeometryTypes.h"
+#include<set>
+#include<unordered_set>
+#include<unordered_map>
 
 
 struct QueueFamilyIndices
@@ -40,6 +42,11 @@ struct SwapChainSupportDetails
 	std::vector<VkSurfaceFormatKHR> formats;
 	std::vector<VkPresentModeKHR> presentModes;
 };
+
+
+
+
+
 
 
 

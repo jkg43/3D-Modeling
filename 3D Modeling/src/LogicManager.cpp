@@ -14,10 +14,8 @@ void updateLogicState()
 
 	float minDist = FLT_MAX;
 		
-	Vertex *closestVertex = nullptr;
+	VertexSelection closestVertex;
 
-	ModelObject *closestObject = nullptr;
-	
 	vec3 worldPos, deltaVec;
 
 
@@ -38,63 +36,34 @@ void updateLogicState()
 			if (dist < minDist)
 			{
 				minDist = dist;
-				closestVertex = &v;
-				closestObject = &o;
+				closestVertex = VertexSelection(&v, &o);
 			}
 		}
 
 	}
 	
+	for (auto &[id, sv] : vg.engine.selectedVertices)
+	{
+		if (sv.vertex == closestVertex.vertex && sv.object == closestVertex.object)
+		{
+			closestVertex.id = sv.id;
+		}
+	}
 
-
+	//none hovered
 	if (minDist > 0.3f)
 	{
+		vg.engine.vertexHoverDisplay->isVisible = false;
 		vg.engine.isVertexHovered = false;
-		if (!vg.engine.isVertexSelected)
-		{
-			vg.renderObjects[4].transform.position = vg.cam.getPosition() + vg.camRay * vg.cam.objectDist - vec3(0.05f);
-			/*vg.renderObjects[4].transform.position = findIntersectionPointOfRayAndPlane(vg.cam.getPosition(), vg.camRay,
-				vec3(0), vec3(0, 0, 1), vec3(0, 1, 0));*/
-		}
 	}
 	else
 	{
+		vg.engine.vertexHoverDisplay->isVisible = true;
+		vg.engine.vertexHoverDisplay->transform.position = closestVertex.getPos() - 
+			vec3(vg.engine.selectionDisplayRadius);
+
 		vg.engine.hoveredVertex = closestVertex;
-		vg.engine.hoveredObject = closestObject;
 		vg.engine.isVertexHovered = true;
-		if (vg.engine.isVertexSelected)
-		{
-			vg.renderObjects[4].transform.position = vg.engine.selectedVertex->pos + 
-				vg.engine.selectedObject->ro->transform.position - vec3(0.05f);
-		}
-		else
-		{
-			vg.renderObjects[4].transform.position = vg.engine.hoveredVertex->pos + 
-				vg.engine.hoveredObject->ro->transform.position - vec3(0.05f);
-		}
-	}
-
-	if (vg.engine.isVertexSelected && vg.engine.selectedObject->ro->verticesChanged)
-	{
-		vg.renderObjects[4].transform.position = vg.engine.selectedVertex->pos + 
-			vg.engine.selectedObject->ro->transform.position - vec3(0.05f);
-	}
-
-	/*vg.renderObjects[4].transform.position = vec3(vg.debugValues[1],
-		vg.debugValues[2], vg.debugValues[3]) - vec3(0.05f) +
-		vg.modelObjects[1].ro->transform.position;*/
-
-
-	vg.engine.displayTranslateAxes = vg.engine.isVertexSelected;
-	if (vg.engine.isVertexSelected)
-	{
-		vg.engine.axesPos = vg.engine.selectedVertex->pos + 
-			vg.engine.selectedObject->ro->transform.position;
-
-		for (RenderObject &o : vg.engine.translateAxes)
-		{
-			o.verticesChanged = true;
-		}
 	}
 
 	int i = 0;
@@ -124,6 +93,75 @@ void updateLogicState()
 			i++;
 		}
 	}
+
+
+	//else
+	//{
+	//	vg.engine.hoveredVertex = closestVertex;
+	//	vg.engine.hoveredObject = closestObject;
+	//	vg.engine.isVertexHovered = true;
+	//	if (vg.engine.isVertexSelected)
+	//	{
+	//		vg.renderObjects[4].transform.position = vg.engine.sv->pos + 
+	//			vg.engine.selectedObject->ro->transform.position - vec3(0.05f);
+	//	}
+	//	else
+	//	{
+	//		vg.renderObjects[4].transform.position = vg.engine.hoveredVertex->pos + 
+	//			vg.engine.hoveredObject->ro->transform.position - vec3(0.05f);
+	//	}
+	//}
+
+	//if (vg.engine.isVertexSelected && vg.engine.selectedObject->ro->verticesChanged)
+	//{
+	//	vg.renderObjects[4].transform.position = vg.engine.sv->pos + 
+	//		vg.engine.selectedObject->ro->transform.position - vec3(0.05f);
+	//}
+
+	///*vg.renderObjects[4].transform.position = vec3(vg.debugValues[1],
+	//	vg.debugValues[2], vg.debugValues[3]) - vec3(0.05f) +
+	//	vg.modelObjects[1].ro->transform.position;*/
+
+
+	//vg.engine.displayTranslateAxes = vg.engine.isVertexSelected;
+	//if (vg.engine.isVertexSelected)
+	//{
+	//	vg.engine.axesPos = vg.engine.sv->pos + 
+	//		vg.engine.selectedObject->ro->transform.position;
+
+	//	for (RenderObject &o : vg.engine.translateAxes)
+	//	{
+	//		o.verticesChanged = true;
+	//	}
+	//}
+
+	//int i = 0;
+
+	//vg.engine.isAxisHovered = false;
+
+	//if (vg.engine.displayTranslateAxes)
+	//{
+	//	for (RenderObject &o : vg.engine.translateAxes)
+	//	{
+	//		if (rayCollideRenderObject(o, vg.cam.getPosition(), vg.camRay))
+	//		{
+	//			for (Vertex &v : o.vertices)
+	//			{
+	//				v.color[i] = 0.5f;
+	//				vg.engine.isAxisHovered = true;
+	//				vg.engine.hoveredAxis = i;
+	//			}
+	//		}
+	//		else
+	//		{
+	//			for (Vertex &v : o.vertices)
+	//			{
+	//				v.color[i] = 1.0f;
+	//			}
+	//		}
+	//		i++;
+	//	}
+	//}
 
 
 

@@ -105,10 +105,23 @@ static void drawFrame()
 	int i = 0;
 	for (RenderObject& o : vg.renderObjects)
 	{
-		drawRenderObject(o, vg.commandBuffers[currentFrame],i);
-		i++;
+		if (o.isVisible)
+		{
+			drawRenderObject(o, vg.commandBuffers[currentFrame],i);
+			i++;
+		}
 	}
 
+	//draw Vertex selection obj at each selected vertex
+	vg.engine.vertexSelectionDisplay->isVisible = true;
+	for (auto &[id, v] : vg.engine.selectedVertices)
+	{
+		vg.engine.vertexSelectionDisplay->transform.position = v.getPos() - 
+			glm::vec3(vg.engine.selectionDisplayRadius);
+		drawRenderObject(*vg.engine.vertexSelectionDisplay, vg.commandBuffers[currentFrame], 0);
+	}
+	vg.engine.vertexSelectionDisplay->isVisible = false;
+	
 
 	if (vg.engine.displayTranslateAxes)
 	{
@@ -120,7 +133,6 @@ static void drawFrame()
 		}
 	}
 
-	
 
 	//start line subpass
 
@@ -132,8 +144,11 @@ static void drawFrame()
 	i = 0;
 	for (ModelObject& o : vg.modelObjects)
 	{
-		drawModelObjectLines(o, vg.commandBuffers[currentFrame], i);
-		i++;
+		if (o.ro->isVisible)
+		{
+			drawModelObjectLines(o, vg.commandBuffers[currentFrame], i);
+			i++;
+		}
 	}
 
 
@@ -1283,7 +1298,7 @@ static void createTextureSampler()
 static void createRenderObjects()
 {
 
-	vg.renderObjects.resize(11);
+	vg.renderObjects.resize(12);
 
 	vg.modelObjects.resize(3);
 
@@ -1302,7 +1317,10 @@ static void createRenderObjects()
 	loadCustomCube(vg.renderObjects[1], axisWidth, axisWidth, 1.0f, 0, 0, 1.0f);
 	loadCustomCube(vg.renderObjects[2], axisWidth, 1.0f, axisWidth, 0, 1.0f, 0);
 	loadCustomCube(vg.renderObjects[3], 1.0f, axisWidth, axisWidth, 1.0f, 0, 0);
-	loadCustomCube(vg.renderObjects[4], 0.1f, 0.1f, 0.1f, 1.0f, 0.6f, 0.2f);
+
+	float s = vg.engine.selectionDisplayRadius * 2;
+	loadCustomCube(vg.renderObjects[4], s, s, s, 1.0f, 0.6f, 0.2f);//vertex selection disp
+	loadCustomCube(vg.renderObjects[11], s, s, s, 0.0f, 0.8f, 0.2f);//vertex hover disp
 	loadCustomCube(vg.renderObjects[5], 0.1f, 0.1f, 0.1f, 1.0f, 0, 0);
 	loadCustomCube(vg.renderObjects[6], 1.0f, 1.0f, 1.0f, 0, 1.0f, 0);
 	vg.renderObjects[6].transform.position.y = 3.0f;

@@ -7,6 +7,12 @@ void initEngine()
 {
 	vg.engine.translateAxes.resize(3);
 
+	vg.engine.vertexSelectionDisplay = &vg.renderObjects[4];
+	vg.engine.vertexHoverDisplay = &vg.renderObjects[11];
+
+	vg.engine.vertexSelectionDisplay->isVisible = false;
+	vg.engine.vertexHoverDisplay->isVisible = false;
+
 	float axisWidth = 0.05f;
 	float axisLength = 0.25f;
 	float axisOffset = 0.1f;
@@ -45,9 +51,9 @@ vec3 Engine::getAxisDirection(int axis)
 	switch (hoveredAxis)
 	{
 	case 0:
-		return vec3(0, 0, 1);
+		return vec3(0, 1, 0);
 	case 1:
-		return vec3(0, 0, 1);
+		return vec3(1, 0, 0);
 	case 2:
 		return vg.cam.right();
 	default:

@@ -2,7 +2,7 @@
 
 
 
-
+size_t VertexSelection::idCounter = 1;
 
 void ModelObject::shiftAlongNormal(float dist,int plane)
 {

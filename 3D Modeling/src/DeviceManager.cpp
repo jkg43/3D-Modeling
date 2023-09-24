@@ -14,15 +14,15 @@ void pickPhysicalDevice()
 
 	printf("Device Count: %d\n", deviceCount);
 
-	//for (const auto& device : devices)
-	//{
-	//	if (isDeviceSuitable(device))
-	//	{
-	//		vg.physicalDevice = device;
-	//		vg.msaaSamples = getMaxUsableSampleCount();
-	//		break;
-	//	}
-	//}
+	for (const auto& device : devices)
+	{
+		if (isDeviceSuitable(device))
+		{
+			/*vg.physicalDevice = device;
+			vg.msaaSamples = getMaxUsableSampleCount();
+			break;*/
+		}
+	}
 
 	//temp solution, manually select integrated gpu
 	vg.physicalDevice = devices[1];
@@ -32,6 +32,8 @@ void pickPhysicalDevice()
 	{
 		throw std::runtime_error("Failed to find a suitable GPU");
 	}
+
+
 }
 
 bool isDeviceSuitable(VkPhysicalDevice device)
@@ -39,8 +41,14 @@ bool isDeviceSuitable(VkPhysicalDevice device)
 	VkPhysicalDeviceProperties deviceProperties;
 	vkGetPhysicalDeviceProperties(device, &deviceProperties);
 
+	//printf("Name: %s\nID: %d\nType: %d\n",
+	//	deviceProperties.deviceName,deviceProperties.deviceID,deviceProperties.deviceType);
+
+
 	VkPhysicalDeviceFeatures deviceFeatures;
 	vkGetPhysicalDeviceFeatures(device, &deviceFeatures);
+
+	
 
 	QueueFamilyIndices indices = findQueueFamilies(device);
 
@@ -98,12 +106,15 @@ bool checkDeviceExtensionSupport(VkPhysicalDevice device)
 	std::vector<VkExtensionProperties> availableExtensions(extensionCount);
 	vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, availableExtensions.data());
 
+	
+
 	std::set<std::string> requiredExtensions(deviceExtensions.begin(), deviceExtensions.end());
 
-	for (const auto& extension : availableExtensions)
-	{
-		requiredExtensions.erase(extension.extensionName);
-	}
+	//for (const auto& extension : availableExtensions)
+	//{
+	//	requiredExtensions.erase(extension.extensionName);
+	//	printf("Extension: %s\n", extension.extensionName);
+	//}
 
 	return requiredExtensions.empty();
 }

@@ -8,11 +8,7 @@ class Engine
 {
 public:
 
-	bool isVertexHovered = false, isVertexSelected = false;
-
-	Vertex *selectedVertex = nullptr, *hoveredVertex = nullptr;
-
-	ModelObject *selectedObject = nullptr, *hoveredObject = nullptr;
+	bool isVertexHovered = false;
 
 	bool isPlaneHovered = false, isPlaneSelected = false;
 	Plane hoveredPlane, selectedPlane;
@@ -27,6 +23,14 @@ public:
 
 	glm::vec3 getMoveDirection(int axis);
 	glm::vec3 getAxisDirection(int axis);
+
+	std::unordered_map<size_t, VertexSelection> selectedVertices;
+
+	RenderObject *vertexSelectionDisplay;
+	float selectionDisplayRadius = 0.05f;
+	RenderObject *vertexHoverDisplay;
+
+	VertexSelection hoveredVertex;
 
 };
 
