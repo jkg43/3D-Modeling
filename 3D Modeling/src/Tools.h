@@ -36,7 +36,9 @@ glm::vec4 convertScreenVectorToWorldVector(glm::vec4 vec);
 // @param pos: 2D position of the mouse in screen space
 glm::vec3 getRayFromScreenPos(glm::vec2 pos);
 //does a raycast to see if a ray collides with a triangle
-bool rayCollideTriangle(glm::vec3 rayPos, glm::vec3 rayDir, glm::vec3 p1, glm::vec3 p2, glm::vec3 p3);
+bool rayCollideTriangle(vec3 rayPos, vec3 rayDir, vec3 p1, vec3 p2, vec3 p3);
+//does a raycast, and returns the collision point if it collides, or a vec3 of FLT_MAX if not
+glm::vec3 rayCollideTrianglePoint(glm::vec3 rayPos, glm::vec3 rayDir, glm::vec3 p1, glm::vec3 p2, glm::vec3 p3);
 //does a raycast to see if a ray collides with a render object
 bool rayCollideRenderObject(RenderObject &o, glm::vec3 rayPos, glm::vec3 rayDir);
 //Checks if a ray vertically upwards from p collides with the line between p1 and p2
@@ -62,7 +64,9 @@ vec3 projectRayOntoLineInDirection(vec3 rayOrigin, vec3 rayDir, vec3 lineOrigin,
 
 //ModelingTools.cpp
 
+void loadModelObjectCube(ModelObject &o, RenderObject *ro, vec3 color);
 void loadModelObjectCube(ModelObject& o, RenderObject* ro);
+void loadModelObjectCylinder(ModelObject &o, RenderObject *ro, float radius, float height, int subdivisions, vec3 color);
 void loadModelObjectCylinder(ModelObject &o, RenderObject *ro, float radius, float height, int subdivisions);
 
 

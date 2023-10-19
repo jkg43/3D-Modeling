@@ -3,20 +3,20 @@
 #include "ModelObject.h"
 using namespace glm;
 
-void loadModelObjectCube(ModelObject& o, RenderObject* ro)
+void loadModelObjectCube(ModelObject &o, RenderObject *ro, vec3 color)
 {
 	o.ro = ro;
 
 	std::vector<Vertex> vertices =
 	{
-		{{0.0f,0.0f,0.0f},{0.0f,0.0f,1.0f}},
-		{{1.0f,0.0f,0.0f},{0.0f,0.0f,1.0f}},
-		{{0.0f,1.0f,0.0f},{0.0f,0.0f,1.0f}},
-		{{1.0f,1.0f,0.0f},{0.0f,0.0f,1.0f}},
-		{{0.0f,0.0f,1.0f},{0.0f,0.0f,1.0f}},
-		{{1.0f,0.0f,1.0f},{0.0f,0.0f,1.0f}},
-		{{0.0f,1.0f,1.0f},{0.0f,0.0f,1.0f}},
-		{{1.0f,1.0f,1.0f},{0.0f,0.0f,1.0f}}
+		{{0.0f,0.0f,0.0f},color},
+		{{1.0f,0.0f,0.0f},color},
+		{{0.0f,1.0f,0.0f},color},
+		{{1.0f,1.0f,0.0f},color},
+		{{0.0f,0.0f,1.0f},color},
+		{{1.0f,0.0f,1.0f},color},
+		{{0.0f,1.0f,1.0f},color},
+		{{1.0f,1.0f,1.0f},color}
 	};
 
 	std::vector<uint32_t> indices =
@@ -64,8 +64,13 @@ void loadModelObjectCube(ModelObject& o, RenderObject* ro)
 
 }
 
+void loadModelObjectCube(ModelObject &o, RenderObject *ro)
+{
+	loadModelObjectCube(o, ro, vec3(0, 0, 1));
+}
 
-void loadModelObjectCylinder(ModelObject &o, RenderObject *ro, float radius, float height, int subdivisions)
+
+void loadModelObjectCylinder(ModelObject &o, RenderObject *ro, float radius, float height, int subdivisions, vec3 color)
 {
 
 	o.ro = ro;
@@ -74,8 +79,8 @@ void loadModelObjectCylinder(ModelObject &o, RenderObject *ro, float radius, flo
 
 	vertices.resize(subdivisions * 2 + 2);
 
-	vertices[0] = { {0.0f,0.0f,0.0f},{0.0f,1.0f,0.0f} };
-	vertices[1] = { {0.0f,0.0f,height},{0.0f,1.0f,0.0f} };
+	vertices[0] = { {0.0f,0.0f,0.0f},color };
+	vertices[1] = { {0.0f,0.0f,height},color };
 
 	float angle = 0, angleSpacing = twoPi / subdivisions;
 
@@ -83,8 +88,8 @@ void loadModelObjectCylinder(ModelObject &o, RenderObject *ro, float radius, flo
 	{
 		float xPos = radius * cos(angle);
 		float yPos = radius * sin(angle);
-		vertices[i + 2] = { {xPos,yPos,0.0f},{0.0f,1.0f,0.0f} };//lower is first half of data range
-		vertices[subdivisions + i + 2] = { {xPos,yPos,height},{0.0f,1.0f,0.0f} };//upper second
+		vertices[i + 2] = { {xPos,yPos,0.0f},color };//lower is first half of data range
+		vertices[subdivisions + i + 2] = { {xPos,yPos,height},color };//upper second
 
 		angle += angleSpacing;
 	}
@@ -168,3 +173,9 @@ void loadModelObjectCylinder(ModelObject &o, RenderObject *ro, float radius, flo
 	o.indices[subdivisions * 2 + 3] = 0xFFFFFFFF;
 
 }
+
+void loadModelObjectCylinder(ModelObject &o, RenderObject *ro, float radius, float height, int subdivisions)
+{
+	loadModelObjectCylinder(o, ro, radius, height, subdivisions, vec3(0, 1, 0));
+}
+

@@ -3,26 +3,26 @@
 #include "VulkanManager.h"
 using namespace glm;
 
-void initEngine()
+void Engine::initEngine()
 {
-	vg.engine.translateAxes.resize(3);
+	translateAxes.resize(3);
 
-	vg.engine.vertexSelectionDisplay = &vg.renderObjects[4];
-	vg.engine.vertexHoverDisplay = &vg.renderObjects[11];
+	vertexSelectionDisplay = &vg.renderObjects[4];
+	vertexHoverDisplay = &vg.renderObjects[11];
 
-	vg.engine.vertexSelectionDisplay->isVisible = false;
-	vg.engine.vertexHoverDisplay->isVisible = false;
+	vertexSelectionDisplay->isVisible = false;
+	vertexHoverDisplay->isVisible = false;
 
 	float axisWidth = 0.05f;
 	float axisLength = 0.25f;
 	float axisOffset = 0.1f;
 
-	loadCustomCube(vg.engine.translateAxes[0], axisLength, axisWidth, axisWidth, 1.0f, 0, 0,glm::vec3(axisOffset,0,0));
-	loadCustomCube(vg.engine.translateAxes[1], axisWidth, axisLength, axisWidth, 0, 1.0f, 0,glm::vec3(0,axisOffset,0));
-	loadCustomCube(vg.engine.translateAxes[2], axisWidth, axisWidth, axisLength, 0, 0, 1.0f, glm::vec3(0, 0, axisOffset));
+	loadCustomCube(translateAxes[0], axisLength, axisWidth, axisWidth, 1.0f, 0, 0,glm::vec3(axisOffset,0,0));
+	loadCustomCube(translateAxes[1], axisWidth, axisLength, axisWidth, 0, 1.0f, 0,glm::vec3(0,axisOffset,0));
+	loadCustomCube(translateAxes[2], axisWidth, axisWidth, axisLength, 0, 0, 1.0f, glm::vec3(0, 0, axisOffset));
 
 	int i = 100;
-	for (RenderObject &o : vg.engine.translateAxes)
+	for (RenderObject &o : translateAxes)
 	{
 		createVertexBuffer(o, i);
 		createIndexBuffer(o, i);

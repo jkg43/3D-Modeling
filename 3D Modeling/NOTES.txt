@@ -4,9 +4,9 @@
 
 next todo:
 
-add selection of multiple objects
+add selection of multiple objects --
 
-make it so colors return properly after deselection
+make it so colors return properly after deselection --
 
 add a way to detect and display which tris/planes are hovered - probably need to do some shader work for that
 
@@ -16,6 +16,8 @@ find a way to make axes render above other objects and distinguish them from oth
 
 work on some custom ui elements
 
+
+make a better way to define shapes(edge index, plane index)
 
 
 

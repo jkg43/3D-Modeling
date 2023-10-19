@@ -10,7 +10,7 @@ int main()
 		initWindow();
 		initVulkan();
 		initImGUI();
-		initEngine();
+		vg.engine.initEngine();
 		mainLoop();
 		cleanup();
 	}

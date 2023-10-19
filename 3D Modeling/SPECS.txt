@@ -1,0 +1,13 @@
+
+
+
+
+
+FRAG SHADER:
+
+if texCoord.x = 1000000 for all vertices of a triangle, the triangle will become highlighted 
+    and have color (1.0,0.4,0.0)
+
+
+
+

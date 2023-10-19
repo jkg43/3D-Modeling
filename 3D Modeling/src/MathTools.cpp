@@ -70,37 +70,25 @@ vec3 getRayFromScreenPos(vec2 pos)
 
 }
 
-bool rayCollideTriangle(vec3 rayPos, vec3 rayDir, vec3 p1, vec3 p2, vec3 p3)
+vec3 rayCollideTrianglePoint(vec3 rayPos, vec3 rayDir, vec3 p1, vec3 p2, vec3 p3)
 {
-    
-    //debug
-    if (vg.debugValues[5] == 2.0f && p3 == vec3(0.0f, 2.0f, 4.0f))
-    {
-        vg.debugValues[5] = 0.0f;
-    }
 
     if (p1 == p2 || p2 == p3 || p3 == p1)
     {
-        return false;
+        return vec3(FLT_MAX);
     }
 
     vec3 s1 = p2 - p1, s2 = p3 - p1;
 
 
-    vec3 p = findIntersectionPointOfRayAndPlane(rayPos, rayDir, p1, s1, s2);
-    if (vg.debugValues[4] == 0)
+    vec3 intersect = findIntersectionPointOfRayAndPlane(rayPos, rayDir, p1, s1, s2);
+
+    if (intersect.x == FLT_MAX)
     {
-        vg.debugValues[1] = p.x;
-        vg.debugValues[2] = p.y;
-        vg.debugValues[3] = p.z;
+        return vec3(FLT_MAX);
     }
 
-    if (p.x == FLT_MAX)
-    {
-        return false;
-    }
-
-    p = p - p1;
+    vec3 p = intersect - p1;
 
     float c1, c2;
 
@@ -119,7 +107,7 @@ bool rayCollideTriangle(vec3 rayPos, vec3 rayDir, vec3 p1, vec3 p2, vec3 p3)
         }
         else
         {
-            return false;
+            return vec3(FLT_MAX);
         }
         c1 = (p.x - s2.x * c2) / s1.x;
     }
@@ -137,7 +125,7 @@ bool rayCollideTriangle(vec3 rayPos, vec3 rayDir, vec3 p1, vec3 p2, vec3 p3)
         }
         else
         {
-            return false;
+            return vec3(FLT_MAX);
         }
         c1 = (p.y - s2.y * c2) / s1.y;
     }
@@ -155,22 +143,27 @@ bool rayCollideTriangle(vec3 rayPos, vec3 rayDir, vec3 p1, vec3 p2, vec3 p3)
         }
         else
         {
-            return false;
+            return vec3(FLT_MAX);
         }
         c1 = (p.z - s2.z * c2) / s1.z;
     }
     else
     {
-        return false;
+        return vec3(FLT_MAX);
     }
 
     if (c1 + c2 <= 1 && c1 >= 0 && c2 >= 0)
     {
-        return true;
+        return intersect;
     }
 
-    return false;
+    return vec3(FLT_MAX);
 
+}
+
+bool rayCollideTriangle(vec3 rayPos, vec3 rayDir, vec3 p1, vec3 p2, vec3 p3)
+{
+    return rayCollideTrianglePoint(rayPos, rayDir, p1, p2, p3).x != FLT_MAX;
 }
 
 bool rayCollideRenderObject(RenderObject &o, vec3 rayPos, vec3 rayDir)

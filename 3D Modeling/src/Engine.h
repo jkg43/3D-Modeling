@@ -8,6 +8,8 @@ class Engine
 {
 public:
 
+	void initEngine();
+
 	bool isVertexHovered = false;
 
 	bool isPlaneHovered = false, isPlaneSelected = false;
@@ -26,12 +28,14 @@ public:
 
 	std::unordered_map<size_t, VertexSelection> selectedVertices;
 
+	std::unordered_map<size_t, TriSelection> selectedTris;
+
 	RenderObject *vertexSelectionDisplay;
 	float selectionDisplayRadius = 0.05f;
 	RenderObject *vertexHoverDisplay;
 
 	VertexSelection hoveredVertex;
 
-};
+	TriSelection hoveredTri;
 
-void initEngine();
+};

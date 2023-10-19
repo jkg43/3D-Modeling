@@ -66,3 +66,44 @@ template<> struct std::hash<VertexSelection>
 };
 
 
+struct TriSelection
+{
+	Vertex *vertices[3];
+	ModelObject *object;
+	size_t id;
+
+	static size_t idCounter;
+
+	TriSelection(Vertex *v1, Vertex *v2, Vertex *v3, ModelObject *o) : object{ o }
+	{
+		vertices[0] = v1;
+		vertices[1] = v2;
+		vertices[2] = v3;
+		id = idCounter;
+		idCounter++;
+	}
+
+	TriSelection() : vertices{ nullptr }, object{ nullptr }, id{ 0 } {}
+
+	//vertexIndex must be 0, 1 or 2
+	glm::vec3 getPos(size_t vertexIndex)
+	{
+		return vertices[vertexIndex]->pos + object->ro->transform.position;
+	}
+
+	friend bool operator == (const TriSelection &v1, const TriSelection &v2)
+	{
+		return v1.id == v2.id;
+	}
+};
+
+
+template<> struct std::hash<TriSelection>
+{
+	size_t operator()(TriSelection const &tri) const
+	{
+		return tri.id;
+	}
+};
+
+

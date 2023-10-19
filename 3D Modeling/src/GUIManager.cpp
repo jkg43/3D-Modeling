@@ -124,14 +124,6 @@ void showDebugMenu()
 		vg.debugValues[5] = 2.0f;
 	}
 
-	if (rayCollideTriangle(vg.cam.getPosition(),vg.camRay,glm::vec3(0),glm::vec3(0,0,2),glm::vec3(0,2,2)))
-	{
-		Text("Collides? Yes");
-	}
-	else
-	{
-		Text("Collides? No");
-	}
 
 	vec3 camPos = vg.cam.getPosition();
 

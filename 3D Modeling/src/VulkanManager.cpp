@@ -4,10 +4,11 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 #define TINYOBJLOADER_IMPLEMENTATION
-#include<tiny_obj_loader.h>
+#include <tiny_obj_loader.h>
 #include <chrono>
 #include "RenderObject.h"
 #include <iostream>
+#include <float.h>
 
 
 VulkanGlobals vg;
@@ -121,6 +122,7 @@ static void drawFrame()
 		drawRenderObject(*vg.engine.vertexSelectionDisplay, vg.commandBuffers[currentFrame], 0);
 	}
 	vg.engine.vertexSelectionDisplay->isVisible = false;
+
 	
 
 	if (vg.engine.displayTranslateAxes)
@@ -1298,15 +1300,33 @@ static void createTextureSampler()
 static void createRenderObjects()
 {
 
-	vg.renderObjects.resize(12);
+	vg.renderObjects.resize(14);
 
-	vg.modelObjects.resize(3);
+	vg.modelObjects.resize(5);
 
 	loadModelObjectCube(vg.modelObjects[0],&vg.renderObjects[8]);
 	vg.modelObjects[0].ro->transform.position.y = -3.0f;
 
+	loadModelObjectCylinder(vg.modelObjects[3], &vg.renderObjects[12], 5, 0.5, 50, glm::vec3(0, 0.2f, 0.5f));
+	vg.modelObjects[3].ro->transform.position = glm::vec3(-5, 5, -5);
+
+	loadModelObjectCube(vg.modelObjects[4], &vg.renderObjects[13],glm::vec3(0.9f,0.2f,0));
+	vg.modelObjects[4].ro->transform.position = glm::vec3(-4, 4, 0);
+
+
+	for (size_t i = 0; i < 3; i++)
+	{
+		//vg.renderObjects[8].vertices[i].color = glm::vec3(1.0, 0.6, 0);
+		vg.renderObjects[8].vertices[i].texCoord.x = 1000000;
+	}
+
+
+
+
 	loadModelObjectCylinder(vg.modelObjects[2], &vg.renderObjects[10], 1, 2, 50);
-	vg.modelObjects[2].ro->transform.position.x = 3.0f;
+	vg.modelObjects[2].ro->transform.position = glm::vec3(-3, 0, -2);
+	vg.modelObjects[2].ro->transform.orientation = glm::quatLookAt(glm::normalize(glm::vec3(0, 1, 2)), 
+		glm::vec3(0, 0, 1));
 
 
 	loadModel(vg.renderObjects[0],MODEL_PATH);
@@ -1358,6 +1378,8 @@ static void createRenderObjects()
 	vg.modelObjects[1].ro = &vg.renderObjects[9];
 
 	vg.modelObjects[1].planes.resize(length);
+
+	vg.modelObjects[1].ro->isVisible = false;
 
 	for (int k = 0; k < length; k++)
 	{

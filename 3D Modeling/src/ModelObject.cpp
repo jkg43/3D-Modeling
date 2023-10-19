@@ -3,6 +3,7 @@
 
 
 size_t VertexSelection::idCounter = 1;
+size_t TriSelection::idCounter = 1;
 
 void ModelObject::shiftAlongNormal(float dist,int plane)
 {

@@ -22,7 +22,9 @@ layout(location=1) out vec2 fragTexCoord;
 void main()
 {
 	gl_Position = ubo.projXview * pco.transform * vec4(inPosition,1.0);
+	
 	fragColor = inColor;
+
 	fragTexCoord=inTexCoord;
 }
 
