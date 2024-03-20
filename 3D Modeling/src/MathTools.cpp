@@ -168,21 +168,63 @@ bool rayCollideTriangle(vec3 rayPos, vec3 rayDir, vec3 p1, vec3 p2, vec3 p3)
 
 bool rayCollideRenderObject(RenderObject &o, vec3 rayPos, vec3 rayDir)
 {
+    if (!o.isVisible)
+    {
+        return false;
+    }
 
     int length = o.indices.size() / 3;
 
 
     for (int i = 0; i < length; i++)
     {
-        vg.debugValues[4] = i;
-        if (rayCollideTriangle(rayPos - o.transform.position, rayDir, o.vertices[o.indices[3 * i]].pos,
-            o.vertices[o.indices[3 * i + 1]].pos, o.vertices[o.indices[3 * i + 2]].pos))
+
+        if (rayCollideTrianglePoint(rayPos - o.transform.position, rayDir, o.vertices[o.indices[3 * i]].pos,
+            o.vertices[o.indices[3 * i + 1]].pos, o.vertices[o.indices[3 * i + 2]].pos).x != FLT_MAX)
         {
             return true;
         }
     }
 
     return false;
+}
+
+bool rayCollideModelObject(ModelObject &o, vec3 rayPos, vec3 rayDir)
+{
+    RenderObject *ro = o.ro;
+
+    if (!ro->isVisible)
+    {
+        return false;
+    }
+
+    int length = ro->indices.size() / 3;
+
+    bool anyCollisions = false;
+
+    for (int i = 0; i < length; i++)
+    {
+        Vertex *v1 = &ro->vertices[ro->indices[3 * i]],
+            *v2 = &ro->vertices[ro->indices[3 * i + 1]],
+            *v3 = &ro->vertices[ro->indices[3 * i + 2]];
+        vec3 collisionPoint = rayCollideTrianglePoint(rayPos - ro->transform.position, rayDir, v1->pos, v2->pos, v3->pos);
+
+        if (collisionPoint.x == FLT_MAX)
+        {
+            continue;
+        }
+        anyCollisions = true;
+
+        float distSquared = distSqr(rayPos, collisionPoint);
+
+        if (distSquared < vg.engine.distToHoveredTriSquared)
+        {
+            vg.engine.distToHoveredTriSquared = distSquared;
+            vg.engine.hoveredTri = TriSelection(v1,v2,v3,&o);
+        }
+    }
+
+    return anyCollisions;
 }
 
 bool rayCollideLine2D(vec2 p, vec2 p1, vec2 p2)
@@ -338,6 +380,10 @@ vec3 projectRayOntoLineInDirection(vec3 rayOrigin, vec3 rayDir, vec3 lineOrigin,
     return lineOrigin + lineDir * c3;
 }
 
+float distSqr(vec3 v1, vec3 v2)
+{
+    return v1.x * v2.x + v1.y + v2.y + v1.z + v2.z;
+}
 
 
 

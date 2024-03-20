@@ -8,7 +8,7 @@ using namespace glm;
 void updateLogicState()
 {
 
-	vg.renderObjects[5].transform.position = vg.cam.targetPos - vec3(0.05f);
+	vg.renderObjects[5]->transform.position = vg.cam.targetPos - vec3(0.05f);
 
 	vec3 camPos = vg.cam.getPosition();
 
@@ -164,8 +164,9 @@ void updateLogicState()
 	//}
 
 
+	//test object collision detection
 
-	const std::vector<Vertex> &v = vg.renderObjects[9].vertices;
+	const std::vector<Vertex> &v = vg.renderObjects[9]->vertices;
 
 	//bool result = rayCollideTriangle(vg.cam.getPosition(), vg.camRay, v[0].pos, v[1].pos, v[2].pos);
 
@@ -174,25 +175,52 @@ void updateLogicState()
 	if (result)
 	{
 		vg.debugValues[0] = 1.0f;
-		for (int i = 0; i < vg.renderObjects[9].vertices.size(); i++)
+		for (int i = 0; i < vg.renderObjects[9]->vertices.size(); i++)
 		{
-			vg.renderObjects[9].vertices[i].color = vec3(0, 1.0, 0);
+			vg.renderObjects[9]->vertices[i].color = vec3(0, 1.0, 0);
 		}
-		vg.renderObjects[9].verticesChanged = true;
+		vg.renderObjects[9]->verticesChanged = true;
 	}
 	else
 	{
 		vg.debugValues[0] = 0.0f;
-		for (int i = 0; i < vg.renderObjects[9].vertices.size(); i++)
+		for (int i = 0; i < vg.renderObjects[9]->vertices.size(); i++)
 		{
-			vg.renderObjects[9].vertices[i].color = vec3(1.0, 0, 0);
+			vg.renderObjects[9]->vertices[i].color = vec3(1.0, 0, 0);
 		}
-		vg.renderObjects[9].verticesChanged = true;
+		vg.renderObjects[9]->verticesChanged = true;
 	}
 
 
+	//hovered tri detection
 
+	//TODO - fix, there is an issue where it isn't always displaying the selected tri correctly
+	//  also there is some texture leakage to neighboring tris when one is selected
 
+	if (vg.engine.hoveredTri.id != 0)
+	{
+		for (Vertex *v : vg.engine.hoveredTri.vertices)
+		{
+			v->texCoord.x = 0;
+		}
+		vg.engine.hoveredTri.object->ro->verticesChanged = true;
+	}
+	vg.engine.hoveredTri = TriSelection();
+
+	vg.engine.distToHoveredTriSquared = FLT_MAX;
+	for (ModelObject &o : vg.modelObjects)
+	{
+		rayCollideModelObject(o, vg.cam.getPosition(), vg.camRay);
+	}
+
+	if (vg.engine.hoveredTri.id != 0)
+	{
+		for (Vertex *v : vg.engine.hoveredTri.vertices)
+		{
+			v->texCoord.x = TEX_COORD_HIGHLIGHT;
+		}
+		vg.engine.hoveredTri.object->ro->verticesChanged = true;
+	}
 
 }
 

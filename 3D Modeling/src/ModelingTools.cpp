@@ -179,3 +179,80 @@ void loadModelObjectCylinder(ModelObject &o, RenderObject *ro, float radius, flo
 	loadModelObjectCylinder(o, ro, radius, height, subdivisions, vec3(0, 1, 0));
 }
 
+
+void loadModelObjectSphere(ModelObject &o, RenderObject *ro, float radius, int subdivisions, vec3 color)
+{
+	o.ro = ro;
+
+	std::vector<Vertex> vertices;
+
+	int N = subdivisions;
+	int H = N / 2;
+	float R = radius;
+
+	vertices.resize(2 + H * N);
+
+	vertices[0] = { {0.0f,0.0f,R},color };
+	vertices[1] = { {0.0f,0.0f,-R},color };
+
+	float angle = 0, angleSpacing = twoPi / N;
+
+	float deltaH = 2.0f * R / (H + 1); //maybe make it not linearly spaced and have more sections at top/bot
+
+	std::vector<float> deltaHNonLinear(H);
+
+	for (size_t i = 0; i < H; i++)
+	{
+		deltaHNonLinear[i] = 0; //TODO
+	}
+
+	for (size_t j = 0; j < N; j++)
+	{
+		float xDir = cos(angle);
+		float yDir = sin(angle);
+
+		float height = -R + deltaH;
+
+		for (size_t i = 0; i < H; i++)
+		{
+			float sliceRadius = sqrt(R * R - height * height);
+			vertices[2 + i * N + j] = { {xDir * sliceRadius,yDir * sliceRadius,height},color };
+			height += deltaH;
+		}
+
+		angle += angleSpacing;
+	}
+
+
+	std::vector<uint32_t> indices;
+
+	indices.resize(3 * 2 * H * N);
+
+	for (size_t i = 0; i < H - 1; i++)
+	{
+		for (size_t j = 0; j < N; j++)
+		{
+			indices[6 * (i * N + j) + 0] = 2 + i * N + j;
+			indices[6 * (i * N + j) + 1] = 2 + i * N + (j + 1) % N;
+			indices[6 * (i * N + j) + 2] = 2 + (i + 1) * N + (j + 1) % N;
+			indices[6 * (i * N + j) + 3] = 2 + i * N + j;
+			indices[6 * (i * N + j) + 4] = 2 + (i + 1) * N + (j + 1) % N;
+			indices[6 * (i * N + j) + 5] = 2 + (i + 1) * N + j;
+		}
+	}
+
+	for (size_t j = 0; j < N; j++)
+	{
+		indices[6 * ((H - 1) * N + j) + 0] = 0;
+		indices[6 * ((H - 1) * N + j) + 1] = 2 + (H - 1) * N + j;
+		indices[6 * ((H - 1) * N + j) + 2] = 2 + (H - 1) * N + (j + 1) % N;
+		indices[6 * ((H - 1) * N + j) + 3] = 1;
+		indices[6 * ((H - 1) * N + j) + 4] = 2 + j;
+		indices[6 * ((H - 1) * N + j) + 5] = 2 + (j + 1) % N;
+	}
+
+	ro->vertices = vertices;
+	ro->indices = indices; 
+
+}
+

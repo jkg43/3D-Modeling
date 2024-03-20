@@ -10,4 +10,7 @@ if texCoord.x = 1000000 for all vertices of a triangle, the triangle will become
 
 
 
+    Vertices go CCW in relation to normal (right hand rule)
+
+
 

@@ -65,3 +65,5 @@ const int DEFAULT_HEAP_SIZE = 33554432;
 const float clickTimeSeconds = 0.15f;
 
 
+const int TEX_COORD_HIGHLIGHT = 1000000;
+

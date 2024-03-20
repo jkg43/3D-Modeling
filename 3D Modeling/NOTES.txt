@@ -10,6 +10,8 @@ make it so colors return properly after deselection --
 
 add a way to detect and display which tris/planes are hovered - probably need to do some shader work for that
 
+** probably need to reconfigure Plane so that there is some way for it to know which tris it contains
+
 later find a way to detect and display which edges are hovered
 
 find a way to make axes render above other objects and distinguish them from other objects of the same color

@@ -104,11 +104,11 @@ static void drawFrame()
 	//start normal subpass
 
 	int i = 0;
-	for (RenderObject& o : vg.renderObjects)
+	for (RenderObject* o : vg.renderObjects)
 	{
-		if (o.isVisible)
+		if (o->isVisible)
 		{
-			drawRenderObject(o, vg.commandBuffers[currentFrame],i);
+			drawRenderObject(*o, vg.commandBuffers[currentFrame],i);
 			i++;
 		}
 	}
@@ -146,7 +146,7 @@ static void drawFrame()
 	i = 0;
 	for (ModelObject& o : vg.modelObjects)
 	{
-		if (o.ro->isVisible)
+		if (o.ro->isVisible && o.lineIndexBuffer != VK_NULL_HANDLE)
 		{
 			drawModelObjectLines(o, vg.commandBuffers[currentFrame], i);
 			i++;
@@ -1300,30 +1300,39 @@ static void createTextureSampler()
 static void createRenderObjects()
 {
 
-	vg.renderObjects.resize(14);
+	//vg.renderObjects.resize(15);
 
-	vg.modelObjects.resize(5);
+	for (size_t i = 0; i < 15; i++)
+	{
+		vg.engine.newRenderObject();
+	}
 
-	loadModelObjectCube(vg.modelObjects[0],&vg.renderObjects[8]);
+	vg.modelObjects.resize(6);
+
+	loadModelObjectCube(vg.modelObjects[0],vg.renderObjects[8]);
 	vg.modelObjects[0].ro->transform.position.y = -3.0f;
 
-	loadModelObjectCylinder(vg.modelObjects[3], &vg.renderObjects[12], 5, 0.5, 50, glm::vec3(0, 0.2f, 0.5f));
+	loadModelObjectCylinder(vg.modelObjects[3], vg.renderObjects[12], 5, 0.5, 50, glm::vec3(0, 0.2f, 0.5f));
 	vg.modelObjects[3].ro->transform.position = glm::vec3(-5, 5, -5);
 
-	loadModelObjectCube(vg.modelObjects[4], &vg.renderObjects[13],glm::vec3(0.9f,0.2f,0));
+	loadModelObjectCube(vg.modelObjects[4], vg.renderObjects[13],glm::vec3(0.9f,0.2f,0));
 	vg.modelObjects[4].ro->transform.position = glm::vec3(-4, 4, 0);
+
+	loadModelObjectSphere(vg.modelObjects[5], vg.renderObjects[14], 1, 20, glm::vec3(1, 0, 0));
+	vg.modelObjects[5].ro->transform.position = glm::vec3(0, 0, 5);
+	
 
 
 	for (size_t i = 0; i < 3; i++)
 	{
 		//vg.renderObjects[8].vertices[i].color = glm::vec3(1.0, 0.6, 0);
-		vg.renderObjects[8].vertices[i].texCoord.x = 1000000;
+		vg.renderObjects[8]->vertices[i].texCoord.x = TEX_COORD_HIGHLIGHT;
 	}
 
 
 
 
-	loadModelObjectCylinder(vg.modelObjects[2], &vg.renderObjects[10], 1, 2, 50);
+	loadModelObjectCylinder(vg.modelObjects[2], vg.renderObjects[10], 1, 2, 50);
 	vg.modelObjects[2].ro->transform.position = glm::vec3(-3, 0, -2);
 	vg.modelObjects[2].ro->transform.orientation = glm::quatLookAt(glm::normalize(glm::vec3(0, 1, 2)), 
 		glm::vec3(0, 0, 1));
@@ -1334,7 +1343,7 @@ static void createRenderObjects()
 
 	float axisWidth = 0.075f;
 
-	loadCustomCube(vg.renderObjects[1], axisWidth, axisWidth, 1.0f, 0, 0, 1.0f);
+	loadCustomCube(vg.renderObjects[1], axisWidth, axisWidth, 1.0f, 0.0f, 0.0f, 1.0f);
 	loadCustomCube(vg.renderObjects[2], axisWidth, 1.0f, axisWidth, 0, 1.0f, 0);
 	loadCustomCube(vg.renderObjects[3], 1.0f, axisWidth, axisWidth, 1.0f, 0, 0);
 
@@ -1343,17 +1352,17 @@ static void createRenderObjects()
 	loadCustomCube(vg.renderObjects[11], s, s, s, 0.0f, 0.8f, 0.2f);//vertex hover disp
 	loadCustomCube(vg.renderObjects[5], 0.1f, 0.1f, 0.1f, 1.0f, 0, 0);
 	loadCustomCube(vg.renderObjects[6], 1.0f, 1.0f, 1.0f, 0, 1.0f, 0);
-	vg.renderObjects[6].transform.position.y = 3.0f;
+	vg.renderObjects[6]->transform.position.y = 3.0f;
 
 
-	vg.renderObjects[7].vertices = {
+	vg.renderObjects[7]->vertices = {
 		{{0,0,1.0f},{1.0f,1.0f,1.0f}},
 		{{0,1.0f,1.0f},{1.0f,1.0f,1.0f}}
 	};
-	vg.renderObjects[7].indices = { 0,1,0 };
+	vg.renderObjects[7]->indices = { 0,1,0 };
 
 
-	vg.renderObjects[9].vertices =
+	vg.renderObjects[9]->vertices =
 	{
 		{{0.0f,0.0f,0.0f},{0.0f,0.0f,1.0f}},
 		{{0.0f,0.0f,2.0f},{0.0f,0.0f,1.0f}},
@@ -1364,18 +1373,18 @@ static void createRenderObjects()
 		{{2.0f,0.0f,0.0f},{0.0f,0.0f,1.0f}}
 	};
 
-	vg.renderObjects[9].indices = { 
+	vg.renderObjects[9]->indices = { 
 		0,1,3,
 		0,2,3,
 		1,4,5,
 		0,2,6
 	};
 
-	int length = vg.renderObjects[9].indices.size() / 3;
+	int length = vg.renderObjects[9]->indices.size() / 3;
 
-	vg.renderObjects[9].transform.position.z = -5.0f;
+	vg.renderObjects[9]->transform.position.z = -5.0f;
 
-	vg.modelObjects[1].ro = &vg.renderObjects[9];
+	vg.modelObjects[1].ro = vg.renderObjects[9];
 
 	vg.modelObjects[1].planes.resize(length);
 
@@ -1388,17 +1397,24 @@ static void createRenderObjects()
 		for (int j = 0; j < 3; j++)
 		{
 			vg.modelObjects[1].planes[k].vertices[j] = 
-				&vg.renderObjects[9].vertices[vg.renderObjects[9].indices[k * 3 + j]];
+				&vg.renderObjects[9]->vertices[vg.renderObjects[9]->indices[k * 3 + j]];
 			vg.modelObjects[1].planes[k].edges[j] = Edge(
-				&vg.renderObjects[9].vertices[vg.renderObjects[9].indices[k * 3 + j]],
-				&vg.renderObjects[9].vertices[vg.renderObjects[9].indices[k * 3 + (j + 1) % 3]]);
+				&vg.renderObjects[9]->vertices[vg.renderObjects[9]->indices[k * 3 + j]],
+				&vg.renderObjects[9]->vertices[vg.renderObjects[9]->indices[k * 3 + (j + 1) % 3]]);
 		}
 	}
-	vg.modelObjects[1].indices = vg.renderObjects[9].indices;
+	vg.modelObjects[1].indices = vg.renderObjects[9]->indices;
+
+
+	RenderObject* testObj = vg.engine.newRenderObject();
+	loadCube(testObj);
+	testObj->transform.position.y = 10;
+
+
 
 
 	int i = 0;
-	for (RenderObject& o : vg.renderObjects)
+	for (RenderObject* o : vg.renderObjects)
 	{
 		createVertexBuffer(o,i);
 		createIndexBuffer(o,i);
@@ -1408,16 +1424,23 @@ static void createRenderObjects()
 	i = 0;
 	for (ModelObject& o : vg.modelObjects)
 	{
-		createModelIndexBuffer(o, i);
+		if (o.indices.size() != 0)
+		{
+			createModelIndexBuffer(o, i);
+		}
+		else
+		{
+			o.lineIndexBuffer = VK_NULL_HANDLE;
+		}
 		i++;
 	}
 
-
+	vg.renderObjects;
 
 
 }
 
-static void loadModel(RenderObject& o,std::string path)
+static void loadModel(RenderObject* o,std::string path)
 {
 	tinyobj::attrib_t attrib;
 	std::vector<tinyobj::shape_t> shapes;
@@ -1448,10 +1471,10 @@ static void loadModel(RenderObject& o,std::string path)
 
 			if (uniqueVertices.count(vertex) == 0)
 			{
-				uniqueVertices[vertex] = static_cast<uint32_t>(o.vertices.size());
-				o.vertices.push_back(vertex);
+				uniqueVertices[vertex] = static_cast<uint32_t>(o->vertices.size());
+				o->vertices.push_back(vertex);
 			}
-			o.indices.push_back(uniqueVertices[vertex]);
+			o->indices.push_back(uniqueVertices[vertex]);
 		}
 	}
 }
@@ -1645,16 +1668,16 @@ void cleanup()
 	vkDestroyImage(vg.device, vg.textureImage, nullptr);
 	vkFreeMemory(vg.device, vg.textureImageMemory, nullptr);
 
-	for (RenderObject& o : vg.renderObjects)
+	for (RenderObject* o : vg.renderObjects)
 	{
-		vg.bufferMemManager.deallocate(o.indexBuffer);
-		vkDestroyBuffer(vg.device, o.indexBuffer, nullptr);
+		vg.bufferMemManager.deallocate(o->indexBuffer);
+		vkDestroyBuffer(vg.device, o->indexBuffer, nullptr);
 
-		vg.bufferMemManager.deallocate(o.vertexBuffer);
-		vkDestroyBuffer(vg.device, o.vertexBuffer, nullptr);
+		vg.bufferMemManager.deallocate(o->vertexBuffer);
+		vkDestroyBuffer(vg.device, o->vertexBuffer, nullptr);
 
-		vg.bufferMemManager.deallocate(o.vertexStagingBuffer);
-		vkDestroyBuffer(vg.device, o.vertexStagingBuffer, nullptr);
+		vg.bufferMemManager.deallocate(o->vertexStagingBuffer);
+		vkDestroyBuffer(vg.device, o->vertexStagingBuffer, nullptr);
 	}
 
 	for (RenderObject &o : vg.engine.translateAxes)

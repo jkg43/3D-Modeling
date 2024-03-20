@@ -169,6 +169,7 @@
     <Text Include="GLSL\FragmentShaderGLSL.txt" />
     <Text Include="GLSL\VertexShaderGLSL.txt" />
     <Text Include="NOTES.txt" />
+    <Text Include="SPECS.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\compile.bat" />

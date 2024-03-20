@@ -31,7 +31,7 @@ static void createCommandPools();
 static void createTextureImage(std::string path, VkImage& textureImage, VkDeviceMemory& textureImageMemory);
 static void createTextureImageView();
 static void createTextureSampler();
-static void loadModel(RenderObject& o,std::string path);
+static void loadModel(RenderObject* o,std::string path);
 static void createUniformBuffers();
 static void createDescriptorPool();
 static void createDescriptorSets();

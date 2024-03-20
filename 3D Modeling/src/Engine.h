@@ -37,5 +37,8 @@ public:
 	VertexSelection hoveredVertex;
 
 	TriSelection hoveredTri;
+	float distToHoveredTriSquared;
+
+	RenderObject* newRenderObject();
 
 };

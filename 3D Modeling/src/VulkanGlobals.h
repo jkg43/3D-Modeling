@@ -62,7 +62,7 @@ typedef struct VulkanGlobals
 	//VkBuffer indexBuffer;
 	//VkDeviceMemory indexBufferMemory;
 
-	std::vector<RenderObject> renderObjects;
+	std::vector<RenderObject*> renderObjects;
 
 	Camera cam = Camera();
 

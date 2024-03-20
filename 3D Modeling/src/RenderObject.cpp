@@ -2,7 +2,6 @@
 
 
 
-
 void RenderObject::scale(float factor)
 {
 	verticesChanged = true;
@@ -11,3 +10,5 @@ void RenderObject::scale(float factor)
 		v.pos *= factor;
 	}
 }
+
+

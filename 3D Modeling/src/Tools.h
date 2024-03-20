@@ -21,8 +21,8 @@ void copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t 
 void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties,
 	VkBuffer& buffer,std::string name);
 void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
-void createVertexBuffer(RenderObject &o, int i);
-void createIndexBuffer(RenderObject &o, int i);
+void createVertexBuffer(RenderObject* o, int i);
+void createIndexBuffer(RenderObject* o, int i);
 void createModelIndexBuffer(ModelObject &o, int i);
 
 //MathTools.cpp
@@ -60,6 +60,10 @@ vec3 movePointAlongLineFromRay(vec3 lineOrigin, vec3 lineDir, vec3 axis, vec3 ra
 //projects a ray onto a line by moving it along an axis until they intersect
 //vec has a value of FLT_MAX if no intersection exists
 vec3 projectRayOntoLineInDirection(vec3 rayOrigin, vec3 rayDir, vec3 lineOrigin, vec3 lineDir, vec3 axis);
+//gets the squared distance between two points
+float distSqr(vec3 v1, vec3 v2);
+//does a raycast to see if a ray collides with a render object, and updates the engine's hovered tri
+bool rayCollideModelObject(ModelObject &o, vec3 rayPos, vec3 rayDir);
 
 
 //ModelingTools.cpp
@@ -68,10 +72,11 @@ void loadModelObjectCube(ModelObject &o, RenderObject *ro, vec3 color);
 void loadModelObjectCube(ModelObject& o, RenderObject* ro);
 void loadModelObjectCylinder(ModelObject &o, RenderObject *ro, float radius, float height, int subdivisions, vec3 color);
 void loadModelObjectCylinder(ModelObject &o, RenderObject *ro, float radius, float height, int subdivisions);
+void loadModelObjectSphere(ModelObject &o, RenderObject *ro, float radius, int subdivisions, vec3 color);
 
 
 //RenderTools.cpp
 
-void loadCube(RenderObject &o);
-void loadCustomCube(RenderObject &o, float xScale, float yScale, float zScale, float r, float g, float b);
-void loadCustomCube(RenderObject &o, float xScale, float yScale, float zScale, float r, float g, float b, glm::vec3 offset);
+void loadCube(RenderObject *o);
+void loadCustomCube(RenderObject *o, float xScale, float yScale, float zScale, float r, float g, float b);
+void loadCustomCube(RenderObject *o, float xScale, float yScale, float zScale, float r, float g, float b, glm::vec3 offset);

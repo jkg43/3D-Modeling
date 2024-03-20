@@ -38,7 +38,9 @@ void initImGUI()
 	// 2: initialize imgui library
 
 	//this initializes the core structures of imgui
-	CreateContext();
+	auto context = CreateContext();
+
+	SetCurrentContext(context);
 
 	//this initializes imgui for SDL
 	ImGui_ImplGlfw_InitForVulkan(vg.window,true);
@@ -133,11 +135,11 @@ void showDebugMenu()
 
 	Text("Cam Ray: x: %f, y: %f, z: %f", camRay.x, camRay.y, camRay.z);
 
-	RenderObject &o = vg.renderObjects[9];
+	RenderObject* o = vg.renderObjects[9];
 
-	Text("Indices size: %d", o.indices.size() / 3);
+	Text("Indices size: %d", o->indices.size() / 3);
 
-	int length = o.indices.size() / 3;
+	int length = o->indices.size() / 3;
 
 	for (int i = 0; i < length; i++)
 	{
@@ -145,16 +147,16 @@ void showDebugMenu()
 
 		for (int j = 0; j < 3; j++)
 		{
-			vec3 vPos = o.vertices[o.indices[3 * i + j]].pos;
+			vec3 vPos = o->vertices[o->indices[3 * i + j]].pos;
 			Text("Vertex %d: %f, %f, %f, Index: %d, Index Val: %d", j, vPos.x, vPos.y, vPos.z, 3 * i + j,
-				o.indices[3 * i + j]);
+				o->indices[3 * i + j]);
 		}
 	}
 
-	Text("Size: %d", o.vertices.size());
+	Text("Size: %d", o->vertices.size());
 
 	int i = 0;
-	for (Vertex &v : o.vertices)
+	for (Vertex &v : o->vertices)
 	{
 		Text("Vertex %d: %f, %f, %f", i, v.pos.x, v.pos.y, v.pos.z);
 		i++;

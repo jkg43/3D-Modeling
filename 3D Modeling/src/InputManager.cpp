@@ -306,7 +306,7 @@ static void keyCallback(GLFWwindow* window, int key, int scancode, int action, i
 				vg.drawDemo = !vg.drawDemo;
 				break;
 			case GLFW_KEY_V:
-				std::cout << "WO1 Vert Count: " << vg.renderObjects[0].vertices.size();
+				std::cout << "RO1 Vert Count: " << vg.renderObjects[0]->vertices.size();
 				break;
 			case GLFW_KEY_R:
 				vg.cam.resetCam();

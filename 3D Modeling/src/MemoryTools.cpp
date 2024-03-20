@@ -102,32 +102,32 @@ void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size)
 	endSingleTimeCommands(commandBuffer);
 }
 
-void createVertexBuffer(RenderObject &o, int i)
+void createVertexBuffer(RenderObject *o, int i)
 {
-	VkDeviceSize bufferSize = sizeof(o.vertices[0]) * o.vertices.size();
+	VkDeviceSize bufferSize = sizeof(o->vertices[0]) * o->vertices.size();
 
 	createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-		o.vertexStagingBuffer, "Vertex buffer staging " + std::to_string(i));
+		o->vertexStagingBuffer, "Vertex buffer staging " + std::to_string(i));
 
 	void *data;
-	vkMapMemory(vg.device, vg.bufferMemManager.memory, vg.bufferMemManager.getOffset(o.vertexStagingBuffer), bufferSize, 0, &data);
-	memcpy(data, o.vertices.data(), (size_t)bufferSize);
+	vkMapMemory(vg.device, vg.bufferMemManager.memory, vg.bufferMemManager.getOffset(o->vertexStagingBuffer), bufferSize, 0, &data);
+	memcpy(data, o->vertices.data(), (size_t)bufferSize);
 	vkUnmapMemory(vg.device, vg.bufferMemManager.memory);
 
 	createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-		o.vertexBuffer, "Vertex buffer " + std::to_string(i));
+		o->vertexBuffer, "Vertex buffer " + std::to_string(i));
 
-	copyBuffer(o.vertexStagingBuffer, o.vertexBuffer, bufferSize);
+	copyBuffer(o->vertexStagingBuffer, o->vertexBuffer, bufferSize);
 
 	//Dont deallocate staging buffer, will be resused whenever vertices change
 
-	o.numVerticesInBuffer = o.vertices.size();
+	o->numVerticesInBuffer = o->vertices.size();
 }
 
-void createIndexBuffer(RenderObject &o, int i)
+void createIndexBuffer(RenderObject *o, int i)
 {
-	VkDeviceSize numIndices = o.indices.size();
-	VkDeviceSize bufferSize = numIndices * sizeof(o.indices[0]);
+	VkDeviceSize numIndices = o->indices.size();
+	VkDeviceSize bufferSize = numIndices * sizeof(o->indices[0]);
 
 	VkBuffer stagingBuffer;
 	createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
@@ -135,13 +135,13 @@ void createIndexBuffer(RenderObject &o, int i)
 
 	void *data;
 	vkMapMemory(vg.device, vg.bufferMemManager.memory, vg.bufferMemManager.getOffset(stagingBuffer), bufferSize, 0, &data);
-	memcpy(data, o.indices.data(), (size_t)bufferSize);
+	memcpy(data, o->indices.data(), (size_t)bufferSize);
 	vkUnmapMemory(vg.device, vg.bufferMemManager.memory);
 
 	createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
-		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, o.indexBuffer, "Index buffer " + std::to_string(i));
+		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, o->indexBuffer, "Index buffer " + std::to_string(i));
 
-	copyBuffer(stagingBuffer, o.indexBuffer, bufferSize);
+	copyBuffer(stagingBuffer, o->indexBuffer, bufferSize);
 
 	vg.bufferMemManager.deallocate(stagingBuffer);
 	vkDestroyBuffer(vg.device, stagingBuffer, nullptr);

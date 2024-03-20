@@ -22,4 +22,6 @@ public:
 	bool isVisible = true;
 
 	Transform transform;
+
+
 };
