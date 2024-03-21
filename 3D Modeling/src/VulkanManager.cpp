@@ -73,6 +73,8 @@ static void createUI()
 	{
 		showDebugMenu();
 	}
+
+	showOpticsOverlay();
 }
 
 static void drawFrame()
@@ -1305,6 +1307,7 @@ static void createRenderObjects()
 	for (size_t i = 0; i < 15; i++)
 	{
 		vg.engine.newRenderObject();
+		vg.renderObjects[i]->isVisible = false;
 	}
 
 	vg.modelObjects.resize(6);
@@ -1413,15 +1416,12 @@ static void createRenderObjects()
 
 
 
-	int i = 0;
 	for (RenderObject* o : vg.renderObjects)
 	{
-		createVertexBuffer(o,i);
-		createIndexBuffer(o,i);
-		i++;
+		vg.engine.createBuffers(o);
 	}
 
-	i = 0;
+	int i = 0;
 	for (ModelObject& o : vg.modelObjects)
 	{
 		if (o.indices.size() != 0)

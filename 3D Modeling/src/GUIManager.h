@@ -4,3 +4,4 @@
 
 void initImGUI();
 void showDebugMenu();
+void showOpticsOverlay();

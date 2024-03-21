@@ -40,5 +40,6 @@ public:
 	float distToHoveredTriSquared;
 
 	RenderObject* newRenderObject();
+	void createBuffers(RenderObject *o);
 
 };

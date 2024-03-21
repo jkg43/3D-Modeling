@@ -266,3 +266,46 @@ void showDebugMenu()
 
 	End();
 }
+
+
+void showOpticsOverlay()
+{
+	ImGuiIO &io = GetIO();
+	const ImGuiViewport *viewport = GetMainViewport();
+	ImVec2 work_pos = viewport->WorkPos;
+	ImVec2 work_size = viewport->WorkSize;
+	ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize |
+		ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav
+		| ImGuiWindowFlags_NoMove;
+	ImVec2 window_pos, window_pivot;
+	window_pos.x = work_pos.x + work_size.x - 10.0f;
+	window_pos.y = work_pos.y + 10.0f;
+	window_pivot.x = 1.0f;
+	window_pivot.y = 0.0f;
+	SetNextWindowPos(window_pos, ImGuiCond_Always, window_pivot);
+
+
+	static float x = 0, y = 0, z = 0;
+
+
+
+	if (Begin("Test fixed", NULL, window_flags))
+	{
+		ImGui::Text("test");
+		InputFloat("X", &x);
+		InputFloat("Y", &y);
+		InputFloat("Z", &z);
+		if (SmallButton("New Cube at coords"))
+		{
+			printf("New unit Cube at x: %.2f, y: %.2f, z: %.2f\n", x, y, z);
+			RenderObject *newCube = vg.engine.newRenderObject();
+			loadCube(newCube);
+			vg.engine.createBuffers(newCube);
+			newCube->transform.position = { x,y,z };
+		}
+
+	}
+	End();
+
+
+}

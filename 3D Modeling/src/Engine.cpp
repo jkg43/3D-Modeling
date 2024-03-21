@@ -69,6 +69,16 @@ RenderObject* Engine::newRenderObject()
 {
 	RenderObject* newRO = new RenderObject();
 
+	
 	vg.renderObjects.push_back(newRO);
 	return newRO;
+}
+
+void Engine::createBuffers(RenderObject *o)
+{
+	static int i = 0;
+
+	createVertexBuffer(o, i);
+	createIndexBuffer(o, i);
+	i++;
 }
