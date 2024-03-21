@@ -88,6 +88,7 @@ void showDebugMenu()
 	Text("Frame Time: %.2f", vg.frameTime);
 	Text("FPS: %d", (int)(1000.0f / vg.frameTime));
 
+	Text("Distance: %f", vg.cam.dist);
 
 	Text("Ray Direction");
 	InputFloat("px", &p.x);
@@ -139,7 +140,7 @@ void showDebugMenu()
 
 	Text("Indices size: %d", o->indices.size() / 3);
 
-	int length = o->indices.size() / 3;
+	size_t length = o->indices.size() / 3;
 
 	for (int i = 0; i < length; i++)
 	{
@@ -285,25 +286,26 @@ void showOpticsOverlay()
 	SetNextWindowPos(window_pos, ImGuiCond_Always, window_pivot);
 
 
-	static float x = 0, y = 0, z = 0;
+	static vec3 p1, p2;
 
 
 
-	if (Begin("Test fixed", NULL, window_flags))
+	if (Begin("Optics", NULL, window_flags))
 	{
-		ImGui::Text("test");
-		InputFloat("X", &x);
-		InputFloat("Y", &y);
-		InputFloat("Z", &z);
-		if (SmallButton("New Cube at coords"))
+		ImGui::Text("Create Optical Connection");
+		InputFloat("X1", &p1.x);
+		InputFloat("Y1", &p1.y);
+		InputFloat("Z1", &p1.z);
+		InputFloat("X2", &p2.x);
+		InputFloat("Y2", &p2.y);
+		InputFloat("Z2", &p2.z);
+		if (SmallButton("New OC between coords"))
 		{
-			printf("New unit Cube at x: %.2f, y: %.2f, z: %.2f\n", x, y, z);
-			RenderObject *newCube = vg.engine.newRenderObject();
-			loadCube(newCube);
-			vg.engine.createBuffers(newCube);
-			newCube->transform.position = { x,y,z };
-		}
+			printf("New optical connection between x1: %.2f, y1: %.2f, z1: %.2f and x1: %.2f, y1: %.2f, z1: %.2f\n",
+				p1.x, p1.y, p1.z, p2.x, p2.y, p2.z);
 
+			createOpticalConnection(p1, p2);
+		}
 	}
 	End();
 

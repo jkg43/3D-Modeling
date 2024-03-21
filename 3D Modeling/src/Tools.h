@@ -62,6 +62,8 @@ vec3 movePointAlongLineFromRay(vec3 lineOrigin, vec3 lineDir, vec3 axis, vec3 ra
 vec3 projectRayOntoLineInDirection(vec3 rayOrigin, vec3 rayDir, vec3 lineOrigin, vec3 lineDir, vec3 axis);
 //gets the squared distance between two points
 float distSqr(vec3 v1, vec3 v2);
+//gets the distance between two points
+float distance(vec3 v1, vec3 v2);
 //does a raycast to see if a ray collides with a render object, and updates the engine's hovered tri
 bool rayCollideModelObject(ModelObject &o, vec3 rayPos, vec3 rayDir);
 
@@ -80,3 +82,14 @@ void loadModelObjectSphere(ModelObject &o, RenderObject *ro, float radius, int s
 void loadCube(RenderObject *o);
 void loadCustomCube(RenderObject *o, float xScale, float yScale, float zScale, float r, float g, float b);
 void loadCustomCube(RenderObject *o, float xScale, float yScale, float zScale, float r, float g, float b, glm::vec3 offset);
+
+
+//OpticsTools.cpp
+void createOpticalConnection(vec3 p1, vec3 p2);
+
+
+
+
+
+
+

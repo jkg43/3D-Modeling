@@ -8,7 +8,7 @@
 
 glm::mat4 Transform::getMatrix()
 {
-	return glm::scale(scale) * glm::mat4_cast(orientation) * glm::translate(position);
+	return glm::scale(scale) * glm::translate(position) * glm::mat4_cast(orientation);
 }
 
 

@@ -158,6 +158,7 @@
     <ClCompile Include="src\ImageTools.cpp" />
     <ClCompile Include="src\ModelingTools.cpp" />
     <ClCompile Include="src\ModelObject.cpp" />
+    <ClCompile Include="src\OpticsTools.cpp" />
     <ClCompile Include="src\RenderTools.cpp" />
     <ClCompile Include="src\Transform.cpp" />
     <ClCompile Include="src\ValidationLayers.cpp" />

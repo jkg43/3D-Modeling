@@ -173,7 +173,7 @@ bool rayCollideRenderObject(RenderObject &o, vec3 rayPos, vec3 rayDir)
         return false;
     }
 
-    int length = o.indices.size() / 3;
+    size_t length = o.indices.size() / 3;
 
 
     for (int i = 0; i < length; i++)
@@ -198,7 +198,7 @@ bool rayCollideModelObject(ModelObject &o, vec3 rayPos, vec3 rayDir)
         return false;
     }
 
-    int length = ro->indices.size() / 3;
+    size_t length = ro->indices.size() / 3;
 
     bool anyCollisions = false;
 
@@ -382,7 +382,13 @@ vec3 projectRayOntoLineInDirection(vec3 rayOrigin, vec3 rayDir, vec3 lineOrigin,
 
 float distSqr(vec3 v1, vec3 v2)
 {
-    return v1.x * v2.x + v1.y + v2.y + v1.z + v2.z;
+    float dx = v2.x - v1.x, dy = v2.y - v1.y, dz = v2.z - v1.z;
+    return dx * dx + dy * dy + dz * dz;
+}
+
+float distance(vec3 v1, vec3 v2)
+{
+    return sqrt(distSqr(v1, v2));
 }
 
 

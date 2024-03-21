@@ -19,7 +19,7 @@ void initInputCallbacks()
 	glfwSetScrollCallback(vg.window, scrollCallback);
 }
 
-const float moveSpeed = 0.01f;
+const float defaultMoveSpeed = 0.01f;
 const float rotationSpeed = -0.005f;
 
 bool draggingLeft = false, draggingRight = false;
@@ -213,9 +213,11 @@ void processInputs()
 		if (draggingRight)
 		{
 			double dx = mx - rightDragX, dy = my - rightDragY;
+			float moveSpeed = defaultMoveSpeed * vg.cam.dist / 8.0f;
 			switch (dragTypeRight)
 			{
 			case DRAG_TYPE_CAM:
+
 
 				deltaM = (int)(dx + dy);
 
@@ -333,7 +335,7 @@ static void keyCallback(GLFWwindow* window, int key, int scancode, int action, i
 				vg.debugValues[5] = 1.0f;
 				break;
 			case GLFW_KEY_UP:
-				printf("Num selected: %d\n", vg.engine.selectedVertices.size());
+				printf("Num selected: %d\n", static_cast<int>(vg.engine.selectedVertices.size()));
 				break;
 			default:
 				break;

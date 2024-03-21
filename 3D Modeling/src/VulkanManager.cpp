@@ -1357,6 +1357,8 @@ static void createRenderObjects()
 	loadCustomCube(vg.renderObjects[6], 1.0f, 1.0f, 1.0f, 0, 1.0f, 0);
 	vg.renderObjects[6]->transform.position.y = 3.0f;
 
+	vg.renderObjects[5]->isVisible = true;
+
 
 	vg.renderObjects[7]->vertices = {
 		{{0,0,1.0f},{1.0f,1.0f,1.0f}},
@@ -1383,7 +1385,7 @@ static void createRenderObjects()
 		0,2,6
 	};
 
-	int length = vg.renderObjects[9]->indices.size() / 3;
+	size_t length = vg.renderObjects[9]->indices.size() / 3;
 
 	vg.renderObjects[9]->transform.position.z = -5.0f;
 
@@ -1413,7 +1415,7 @@ static void createRenderObjects()
 	loadCube(testObj);
 	testObj->transform.position.y = 10;
 
-
+	testObj->isVisible = false;
 
 
 	for (RenderObject* o : vg.renderObjects)

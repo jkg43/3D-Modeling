@@ -21,6 +21,10 @@ void updateLogicState()
 
 	for (ModelObject &o : vg.modelObjects)
 	{
+		if (!o.ro->isVisible)
+		{
+			continue;
+		}
 		vec3 objPos = o.ro->transform.position;
 
 		float dist = 0;
@@ -210,7 +214,10 @@ void updateLogicState()
 	vg.engine.distToHoveredTriSquared = FLT_MAX;
 	for (ModelObject &o : vg.modelObjects)
 	{
-		rayCollideModelObject(o, vg.cam.getPosition(), vg.camRay);
+		if (o.ro->isVisible)
+		{
+			rayCollideModelObject(o, vg.cam.getPosition(), vg.camRay);
+		}
 	}
 
 	if (vg.engine.hoveredTri.id != 0)
