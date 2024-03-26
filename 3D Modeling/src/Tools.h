@@ -24,6 +24,9 @@ void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
 void createVertexBuffer(RenderObject* o, int i);
 void createIndexBuffer(RenderObject* o, int i);
 void createModelIndexBuffer(ModelObject &o, int i);
+VkDeviceSize align(VkDeviceSize val, VkDeviceSize alignment);
+VkDeviceSize align16(VkDeviceSize val);
+VkDeviceSize align256(VkDeviceSize val);
 
 //MathTools.cpp
 

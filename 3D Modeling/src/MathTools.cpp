@@ -391,5 +391,3 @@ float distance(vec3 v1, vec3 v2)
     return sqrt(distSqr(v1, v2));
 }
 
-
-

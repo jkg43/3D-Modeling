@@ -33,7 +33,7 @@ public:
 	void init();
 	void cleanup();
 	void combineBlocks();
-	AllocResult allocate(VkDeviceSize size,void* obj,std::string n);
+	AllocResult allocate(VkDeviceSize size, void *obj, std::string n, VkDeviceSize a);
 	DeallocResult deallocate(void* object);
 	MemBlock* getBlock(void* obj);
 	VkDeviceSize getOffset(void* object);
@@ -41,4 +41,5 @@ public:
 	VkDeviceMemory memory;
 	VkMemoryPropertyFlags properties;
 	std::list<MemBlock> blocks;
+	uint32_t alignment = 0x10;
 };

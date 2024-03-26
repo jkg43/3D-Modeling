@@ -25,7 +25,7 @@ void pickPhysicalDevice()
 	}
 
 	//temp solution, manually select integrated gpu
-	vg.physicalDevice = devices[1];
+	vg.physicalDevice = devices[0];
 	vg.msaaSamples = getMaxUsableSampleCount();
 
 	if (vg.physicalDevice == VK_NULL_HANDLE)

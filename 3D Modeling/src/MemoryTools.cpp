@@ -71,6 +71,10 @@ void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyF
 	VkMemoryRequirements memRequirements;
 	vkGetBufferMemoryRequirements(vg.device, buffer, &memRequirements);
 
+	if (memRequirements.alignment == 0x100) {
+		printf("");
+	}
+	
 	VkMemoryAllocateInfo allocInfo{};
 	allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
 	allocInfo.allocationSize = memRequirements.size;
@@ -81,7 +85,7 @@ void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyF
 	//	throw std::runtime_error("Failed to allocate buffer memory");
 	//}
 
-	if (vg.bufferMemManager.allocate(memRequirements.size, buffer, name) != ALLOC_SUCCESS)
+	if (vg.bufferMemManager.allocate(memRequirements.size, buffer, name,memRequirements.alignment) != ALLOC_SUCCESS)
 	{
 		throw std::runtime_error("Failed to allocate buffer memory");
 	}
@@ -169,4 +173,34 @@ void createModelIndexBuffer(ModelObject &o, int i)
 
 	vg.bufferMemManager.deallocate(stagingBuffer);
 	vkDestroyBuffer(vg.device, stagingBuffer, nullptr);
+}
+
+VkDeviceSize align(VkDeviceSize val, VkDeviceSize alignment)
+{
+	if (alignment <= 0x10)
+	{
+		return align16(val);
+	}
+	else
+	{
+		return align256(val);
+	}
+}
+
+VkDeviceSize align16(VkDeviceSize val)
+{
+	if (val % 0x10 == 0)
+	{
+		return val;
+	}
+	return ((val >> 4) + 1) << 4;
+}
+
+VkDeviceSize align256(VkDeviceSize val)
+{
+	if (val % 0x100 == 0)
+	{
+		return val;
+	}
+	return ((val >> 8) + 1) << 8;
 }

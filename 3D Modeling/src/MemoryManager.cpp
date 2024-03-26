@@ -15,6 +15,8 @@ void MemoryManager::init()
 	VkPhysicalDeviceMemoryProperties memoryProperties;
 	vkGetPhysicalDeviceMemoryProperties(vg.physicalDevice, &memoryProperties);
 
+
+
 	uint32_t desiredMemoryTypeIndex = UINT32_MAX;
 	for (uint32_t i = 0; i < memoryProperties.memoryTypeCount; ++i) {
 		if ((memoryProperties.memoryTypes[i].propertyFlags & VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT) &&
@@ -114,19 +116,36 @@ void MemoryManager::combineBlocks()
 
 int emptyIndex = 0;
 
-AllocResult MemoryManager::allocate(VkDeviceSize size,void* obj,std::string n)
+AllocResult MemoryManager::allocate(VkDeviceSize size, void *obj, std::string n, VkDeviceSize a)
 {
+	size = align(size, a);
+
 	size_t i = 0;
 	for (MemBlock& b : blocks)
 	{
-		if (!b.used && b.size >= size /*&& size >= b.size * 0.8*/)
+		if (!b.used && b.size >= size + 2 * a /*&& size >= b.size * 0.8*/)
 		{
 			//std::cout << "Reusing - Old Name: " << b.name << ", New name: " << n << ", Offset: " << b.offset << ", Old Size: " << b.size
 			//	<< ", New size: " << size << std::endl;
 
 			b.name = n;
 
-			VkDeviceSize newSize = b.size - size;
+			VkDeviceSize newOffset = align(b.offset, a);
+
+			VkDeviceSize offsetGap = newOffset - b.offset;
+
+			if (newOffset != b.offset)
+			{
+				std::list<MemBlock>::iterator it = blocks.begin();
+				std::advance(it, i);
+				blocks.insert(it, MemBlock(b.offset, offsetGap, nullptr, "Empty "
+					+ std::to_string(emptyIndex)));
+				emptyIndex++;
+			}
+
+			b.offset = newOffset;
+
+			VkDeviceSize newSize = b.size - size - offsetGap;
 
 			b.size = size;
 			b.object = obj;
@@ -137,7 +156,7 @@ AllocResult MemoryManager::allocate(VkDeviceSize size,void* obj,std::string n)
 
 				std::list<MemBlock>::iterator it = blocks.begin();
 				std::advance(it, i+1);
-				blocks.insert(it,MemBlock(b.offset + size, newSize, nullptr, "Empty "
+				blocks.insert(it, MemBlock(b.offset + size, newSize, nullptr, "Empty "
 					+ std::to_string(emptyIndex)));
 				emptyIndex++;
 			}
@@ -148,7 +167,7 @@ AllocResult MemoryManager::allocate(VkDeviceSize size,void* obj,std::string n)
 		}
 		i++;
 	}
-	VkDeviceSize endPos = DEFAULT_HEAP_SIZE-memoryLeft;
+	VkDeviceSize endPos = align(DEFAULT_HEAP_SIZE - memoryLeft, a);
 	
 	if (size <= memoryLeft)
 	{
