@@ -23,6 +23,10 @@ make a better way to define shapes(edge index, plane index)
 
 
 
+OPTICS TODO:
 
+transparency
+
+proper lens behaviors
 
 

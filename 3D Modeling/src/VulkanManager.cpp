@@ -1350,6 +1350,10 @@ static void createRenderObjects()
 	loadCustomCube(vg.renderObjects[2], axisWidth, 1.0f, axisWidth, 0, 1.0f, 0);
 	loadCustomCube(vg.renderObjects[3], 1.0f, axisWidth, axisWidth, 1.0f, 0, 0);
 
+	vg.renderObjects[1]->isVisible = true;
+	vg.renderObjects[2]->isVisible = true;
+	vg.renderObjects[3]->isVisible = true;
+
 	float s = vg.engine.selectionDisplayRadius * 2;
 	loadCustomCube(vg.renderObjects[4], s, s, s, 1.0f, 0.6f, 0.2f);//vertex selection disp
 	loadCustomCube(vg.renderObjects[11], s, s, s, 0.0f, 0.8f, 0.2f);//vertex hover disp

@@ -68,7 +68,6 @@ vec3 Engine::getAxisDirection(int axis)
 RenderObject* Engine::newRenderObject()
 {
 	RenderObject* newRO = new RenderObject();
-
 	
 	vg.renderObjects.push_back(newRO);
 	return newRO;

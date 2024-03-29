@@ -1,6 +1,7 @@
 #include "Constants.h"
 #include <iostream>
 #include <string>
+#include "OpticalModeling.h"
 using namespace ImGui;
 using namespace glm;
 
@@ -269,6 +270,9 @@ void showDebugMenu()
 }
 
 
+extern OpticsGlobals og;
+
+
 void showOpticsOverlay()
 {
 	ImGuiIO &io = GetIO();
@@ -286,25 +290,76 @@ void showOpticsOverlay()
 	SetNextWindowPos(window_pos, ImGuiCond_Always, window_pivot);
 
 
-	static vec3 p1, p2;
+	static vec3 p1, p2 = vec3(0, 1, 0);
 
 
 
 	if (Begin("Optics", NULL, window_flags))
 	{
-		ImGui::Text("Create Optical Connection");
-		InputFloat("X1", &p1.x);
-		InputFloat("Y1", &p1.y);
-		InputFloat("Z1", &p1.z);
-		InputFloat("X2", &p2.x);
-		InputFloat("Y2", &p2.y);
-		InputFloat("Z2", &p2.z);
-		if (SmallButton("New OC between coords"))
+		ImGui::Text("Create Optical Ray");
+		//InputFloat("PX", &p1.x);
+		//InputFloat("PY", &p1.y);
+		//InputFloat("PZ", &p1.z);
+		//InputFloat("DX", &p2.x);
+		//InputFloat("DY", &p2.y);
+		//InputFloat("DZ", &p2.z);
+		SliderFloat("Pos X", &p1.x, -1.0f, 1.0f);
+		SliderFloat("Pos Y", &p1.y, -1.0f, 1.0f);
+		SliderFloat("Pos Z", &p1.z, -1.0f, 1.0f);
+		Spacing();
+		SliderFloat("Dir X", &p2.x, -1.0f, 1.0f);
+		SliderFloat("Dir Y", &p2.y, -1.0f, 1.0f);
+		SliderFloat("Dir Z", &p2.z, -1.0f, 1.0f);
+
+		if (SmallButton("New ray"))
 		{
-			printf("New optical connection between x1: %.2f, y1: %.2f, z1: %.2f and x1: %.2f, y1: %.2f, z1: %.2f\n",
+			printf("New optical ray at x: %.2f, y: %.2f, z: %.2f in direction x: %.2f, y: %.2f, z: %.2f\n",
 				p1.x, p1.y, p1.z, p2.x, p2.y, p2.z);
 
-			createOpticalConnection(p1, p2);
+			//createOpticalConnectionWithEnds(p1, p2);
+
+			new OpticalRay(p1, normalize(p2));
+		}
+
+		Spacing();
+
+		Text("Create Lens");
+
+		static vec3 lp = vec3(0, 3, 0) , ln = vec3(0, 1, 0);
+		static float rad = 1, len = 0.1f, a0 = 1, a1, a2, a3;
+		
+		
+		InputFloat("X", &lp.x);
+		InputFloat("Y", &lp.y);
+		InputFloat("Z", &lp.z);
+		Spacing();
+		InputFloat("NX", &ln.x);
+		InputFloat("NY", &ln.y);
+		InputFloat("NZ", &ln.z);
+		Spacing();
+		InputFloat("Radius", &rad);
+		InputFloat("Len", &len);
+		Spacing();
+		InputFloat("A0", &a0);
+		InputFloat("A1", &a1);
+		InputFloat("A2", &a2);
+		InputFloat("A3", &a3);
+		if (SmallButton("New Lens"))
+		{
+			if (ln == vec3(0))
+			{
+				printf("Invalid direction\n");
+			}
+			else
+			{
+				printf("New lens at x: %.2f, y: %.2f, z: %.2f in dir x: %.2f, y: %.2f, z: %.2f",
+					lp.x, lp.y, lp.z, ln.x, ln.y, ln.z);
+				printf(" with radius %.2f, length %.2f, and eqn A0=%.2f,A1=%.2f,A2=%.2f,A3=%.2f,\n",
+					rad, len, a0, a1, a2, a3);
+
+				og.lenses.push_back(new Lens(rad, len, lp, ln, a0, a1, a2, a3));
+			}
+			
 		}
 	}
 	End();

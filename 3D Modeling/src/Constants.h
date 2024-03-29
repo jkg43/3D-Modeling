@@ -16,7 +16,7 @@
 
 
 #define NEAR_CLIPPING_DIST 0.1f
-#define FAR_CLIPPING_DIST 100.0f
+#define FAR_CLIPPING_DIST 1000.0f
 
 
 

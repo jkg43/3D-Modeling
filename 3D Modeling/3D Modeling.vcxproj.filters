@@ -111,6 +111,9 @@
     <ClCompile Include="src\OpticsTools.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\OpticalModeling.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="GLSL\FragmentShaderGLSL.txt">
@@ -228,6 +231,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\ModelObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\OpticalModeling.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

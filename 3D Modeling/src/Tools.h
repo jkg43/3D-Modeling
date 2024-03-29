@@ -53,6 +53,10 @@ bool checkIfPointInTriangle2D(glm::vec2 p, glm::vec2 p1, glm::vec2 p2, glm::vec2
 //v1 and v2 are two vectors on the plane
 glm::vec3 findIntersectionPointOfRayAndPlane(glm::vec3 rayOri, glm::vec3 rayDir, glm::vec3 planeOri,
 	glm::vec3 v1, glm::vec3 v2);
+//finds the intersection point between a ray and a plane
+//vec has value of FLT_MAX if no intersection point exists
+//norm is the normal of the plane
+vec3 findIntersectionPointOfRayAndPlane(vec3 rayOri, vec3 rayDir, vec3 planeOri, vec3 norm);
 //moves a point along a line starting at the point closest to ray1 in the axis direction
 //  and ending at the point on the line closest to ray2 in the axis direction
 //  that ray1 points to and ending at the point along the axis that
@@ -69,13 +73,17 @@ float distSqr(vec3 v1, vec3 v2);
 float distance(vec3 v1, vec3 v2);
 //does a raycast to see if a ray collides with a render object, and updates the engine's hovered tri
 bool rayCollideModelObject(ModelObject &o, vec3 rayPos, vec3 rayDir);
+//checks if a ray collides with a circle
+//if it does, returns the collision point
+//if not, returns a vec of FLT_MAX
+vec3 rayCollideCircle(vec3 rayOri, vec3 rayDir, Circle *circle);
 
 
 //ModelingTools.cpp
 
 void loadModelObjectCube(ModelObject &o, RenderObject *ro, vec3 color);
 void loadModelObjectCube(ModelObject& o, RenderObject* ro);
-void loadModelObjectCylinder(ModelObject &o, RenderObject *ro, float radius, float height, int subdivisions, vec3 color);
+void loadModelObjectCylinder(ModelObject &o, RenderObject *ro, float radius, float height, size_t subdivisions, vec3 color);
 void loadModelObjectCylinder(ModelObject &o, RenderObject *ro, float radius, float height, int subdivisions);
 void loadModelObjectSphere(ModelObject &o, RenderObject *ro, float radius, int subdivisions, vec3 color);
 
@@ -85,10 +93,13 @@ void loadModelObjectSphere(ModelObject &o, RenderObject *ro, float radius, int s
 void loadCube(RenderObject *o);
 void loadCustomCube(RenderObject *o, float xScale, float yScale, float zScale, float r, float g, float b);
 void loadCustomCube(RenderObject *o, float xScale, float yScale, float zScale, float r, float g, float b, glm::vec3 offset);
+void loadCylinder(RenderObject *ro, float radius, float height, vec3 color, size_t subdivisions);
+void loadCylinder(RenderObject *ro, float radius, float height, vec3 color);
 
 
 //OpticsTools.cpp
 void createOpticalConnection(vec3 p1, vec3 p2);
+void createOpticalConnectionWithEnds(vec3 p1, vec3 p2);
 
 
 

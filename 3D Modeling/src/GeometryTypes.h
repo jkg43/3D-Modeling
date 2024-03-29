@@ -1,12 +1,13 @@
 #pragma once
 #include "StandardIncludes.h"
 
+using namespace glm;
 
 struct Vertex
 {
-	glm::vec3 pos;
-	glm::vec3 color;
-	glm::vec2 texCoord;
+	vec3 pos;
+	vec3 color;
+	vec2 texCoord;
 
 	static VkVertexInputBindingDescription getBindingDescription()
 	{
@@ -47,9 +48,9 @@ template<> struct std::hash<Vertex>
 {
 	size_t operator()(Vertex const& vertex) const
 	{
-		return ((hash<glm::vec3>()(vertex.pos) ^
-			(hash<glm::vec3>()(vertex.color) << 1)) >> 1) ^
-			(hash<glm::vec2>()(vertex.texCoord) << 1);
+		return ((hash<vec3>()(vertex.pos) ^
+			(hash<vec3>()(vertex.color) << 1)) >> 1) ^
+			(hash<vec2>()(vertex.texCoord) << 1);
 	}
 };
 
@@ -75,10 +76,21 @@ class Plane
 public:
 	std::vector<Vertex*> vertices;
 	std::vector<Edge> edges;
-	glm::vec3 normal;
+	vec3 normal;
 
 	void calculateNormal();
 
+};
+
+
+class Circle
+{
+public:
+	vec3 pos;
+	vec3 normal;
+	float radius;
+
+	Circle(vec3 position, vec3 norm, float rad) : pos{ position }, normal{ norm }, radius{ rad } {};
 };
 
 

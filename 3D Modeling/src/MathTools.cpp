@@ -318,6 +318,29 @@ vec3 findIntersectionPointOfRayAndPlane(vec3 rayOri, vec3 rayDir, vec3 planeOri,
     return rayOri + rayDir * l;
 }
 
+vec3 findIntersectionPointOfRayAndPlane(vec3 rayOri, vec3 rayDir, vec3 planeOri, vec3 norm)
+{
+    vec3 v1,v2;
+
+    if (norm.y == 0 && norm.z == 0)//x vec
+    {
+        v1 = vec3(0, 1, 0);
+        v2 = vec3(0, 0, 1);
+    }
+    else if (norm.x == 0 && norm.z == 0)//y vec
+    {
+        v1 = vec3(1, 0, 0);
+        v2 = vec3(0, 0, 1);
+    }
+    else
+    {
+        v1 = cross(norm, vec3(1, 0, 0));
+        v2 = cross(norm, vec3(0, 1, 0));
+    }
+
+    return findIntersectionPointOfRayAndPlane(rayOri, rayDir, planeOri, v1, v2);
+}
+
 vec3 movePointAlongLineFromRay(vec3 lineOrigin, vec3 lineDir, vec3 axis, vec3 rayOrigin, vec3 ray1, vec3 ray2)
 {
     vec3 proj1 = projectRayOntoLineInDirection(rayOrigin, ray1, lineOrigin, lineDir, axis);
@@ -390,4 +413,25 @@ float distance(vec3 v1, vec3 v2)
 {
     return sqrt(distSqr(v1, v2));
 }
+
+vec3 rayCollideCircle(vec3 rayOri, vec3 rayDir, Circle *circle)
+{
+    vec3 collision = findIntersectionPointOfRayAndPlane(rayOri, rayDir, circle->pos, circle->normal);
+
+    if (collision.x == FLT_MAX)
+    {
+        return vec3(FLT_MAX);
+    }
+
+    float dist = distance(circle->pos, collision);
+
+    if (dist <= circle->radius)
+    {
+        return collision;
+    }
+
+    return vec3(FLT_MAX);
+}
+
+
 

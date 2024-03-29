@@ -70,61 +70,12 @@ void loadModelObjectCube(ModelObject &o, RenderObject *ro)
 }
 
 
-void loadModelObjectCylinder(ModelObject &o, RenderObject *ro, float radius, float height, int subdivisions, vec3 color)
+void loadModelObjectCylinder(ModelObject &o, RenderObject *ro, float radius, float height, size_t subdivisions, vec3 color)
 {
 
 	o.ro = ro;
 
-	std::vector<Vertex> vertices;
-
-	vertices.resize(subdivisions * 2 + 2);
-
-	vertices[0] = { {0.0f,0.0f,0.0f},color };
-	vertices[1] = { {0.0f,0.0f,height},color };
-
-	float angle = 0, angleSpacing = twoPi / subdivisions;
-
-	for (size_t i = 0; i < subdivisions; i++)
-	{
-		float xPos = radius * cos(angle);
-		float yPos = radius * sin(angle);
-		vertices[i + 2] = { {xPos,yPos,0.0f},color };//lower is first half of data range
-		vertices[subdivisions + i + 2] = { {xPos,yPos,height},color };//upper second
-
-		angle += angleSpacing;
-	}
-
-	std::vector<uint32_t> indices;
-
-	indices.resize(subdivisions * 4 * 3);
-
-	for (size_t i = 0; i < subdivisions; i++)
-	{
-
-		//bottom face
-		indices[3 * i] = 0;
-		indices[3 * i + 1] = 2 + (i + 1) % subdivisions;
-		indices[3 * i + 2] = 2 + i;
-
-		//top face
-		indices[3 * subdivisions + 3 * i] = 1;
-		indices[3 * subdivisions + 3 * i + 1] = 2 + subdivisions + i;
-		indices[3 * subdivisions + 3 * i + 2] = 2 + subdivisions + (i + 1) % subdivisions;
-
-		//upper tri of quad
-		indices[3 * 2 * subdivisions + 3 * i] = 2 + subdivisions + i;
-		indices[3 * 2 * subdivisions + 3 * i + 1] = 2 + i;
-		indices[3 * 2 * subdivisions + 3 * i + 2] = 2 + subdivisions + (i + 1) % subdivisions;
-
-		//lower tri of quad
-		indices[3 * 3 * subdivisions + 3 * i] = 2 + i;
-		indices[3 * 3 * subdivisions + 3 * i + 1] = 2 + (i + 1) % subdivisions;
-		indices[3 * 3 * subdivisions + 3 * i + 2] = 2 + subdivisions + (i + 1) % subdivisions;
-
-	}
-
-	ro->vertices = vertices;
-	ro->indices = indices;
+	loadCylinder(ro, radius, height, color, subdivisions);
 
 
 	o.planes.resize(2 + subdivisions);
@@ -164,12 +115,12 @@ void loadModelObjectCylinder(ModelObject &o, RenderObject *ro, float radius, flo
 	o.indices.resize(subdivisions * 2 + 4);
 	for (size_t i = 0; i < subdivisions + 1; i++)
 	{
-		o.indices[i] = 2 + i % subdivisions;
-		o.indices[subdivisions + i + 2] = subdivisions + 2 + i % subdivisions;
+		o.indices[i] = (uint32_t)(2 + i % subdivisions);
+		o.indices[subdivisions + i + 2] = (uint32_t)(subdivisions + 2 + i % subdivisions);
 	}
 
 
-	o.indices[subdivisions+1] = 0xFFFFFFFF;
+	o.indices[subdivisions + 1] = 0xFFFFFFFF;
 	o.indices[subdivisions * 2 + 3] = 0xFFFFFFFF;
 
 }
@@ -186,11 +137,11 @@ void loadModelObjectSphere(ModelObject &o, RenderObject *ro, float radius, int s
 
 	std::vector<Vertex> vertices;
 
-	int N = subdivisions;
-	int H = N / 2;
+	size_t N = subdivisions;
+	size_t H = N / 2;
 	float R = radius;
 
-	vertices.resize(2 + H * N);
+	vertices.resize(H * N + 2);
 
 	vertices[0] = { {0.0f,0.0f,R},color };
 	vertices[1] = { {0.0f,0.0f,-R},color };
@@ -226,29 +177,29 @@ void loadModelObjectSphere(ModelObject &o, RenderObject *ro, float radius, int s
 
 	std::vector<uint32_t> indices;
 
-	indices.resize(3 * 2 * H * N);
+	indices.resize(H * N * 3 * 2);
 
 	for (size_t i = 0; i < H - 1; i++)
 	{
 		for (size_t j = 0; j < N; j++)
 		{
-			indices[6 * (i * N + j) + 0] = 2 + i * N + j;
-			indices[6 * (i * N + j) + 1] = 2 + i * N + (j + 1) % N;
-			indices[6 * (i * N + j) + 2] = 2 + (i + 1) * N + (j + 1) % N;
-			indices[6 * (i * N + j) + 3] = 2 + i * N + j;
-			indices[6 * (i * N + j) + 4] = 2 + (i + 1) * N + (j + 1) % N;
-			indices[6 * (i * N + j) + 5] = 2 + (i + 1) * N + j;
+			indices[6 * (i * N + j) + 0] = (uint32_t)(2 + i * N + j);
+			indices[6 * (i * N + j) + 1] = (uint32_t)(2 + i * N + (j + 1) % N);
+			indices[6 * (i * N + j) + 2] = (uint32_t)(2 + (i + 1) * N + (j + 1) % N);
+			indices[6 * (i * N + j) + 3] = (uint32_t)(2 + i * N + j);
+			indices[6 * (i * N + j) + 4] = (uint32_t)(2 + (i + 1) * N + (j + 1) % N);
+			indices[6 * (i * N + j) + 5] = (uint32_t)(2 + (i + 1) * N + j);
 		}
 	}
 
 	for (size_t j = 0; j < N; j++)
 	{
-		indices[6 * ((H - 1) * N + j) + 0] = 0;
-		indices[6 * ((H - 1) * N + j) + 1] = 2 + (H - 1) * N + j;
-		indices[6 * ((H - 1) * N + j) + 2] = 2 + (H - 1) * N + (j + 1) % N;
-		indices[6 * ((H - 1) * N + j) + 3] = 1;
-		indices[6 * ((H - 1) * N + j) + 4] = 2 + j;
-		indices[6 * ((H - 1) * N + j) + 5] = 2 + (j + 1) % N;
+		indices[6 * ((H - 1) * N + j) + 0] = (uint32_t)(0);
+		indices[6 * ((H - 1) * N + j) + 1] = (uint32_t)(2 + (H - 1) * N + j);
+		indices[6 * ((H - 1) * N + j) + 2] = (uint32_t)(2 + (H - 1) * N + (j + 1) % N);
+		indices[6 * ((H - 1) * N + j) + 3] = (uint32_t)(1);
+		indices[6 * ((H - 1) * N + j) + 4] = (uint32_t)(2 + j);
+		indices[6 * ((H - 1) * N + j) + 5] = (uint32_t)(2 + (j + 1) % N);
 	}
 
 	ro->vertices = vertices;
